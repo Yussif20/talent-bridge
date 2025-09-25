@@ -1,9 +1,6 @@
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export default function ParentForm() {
-  const t = useTranslations("ParentForm");
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-20">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -14,8 +11,8 @@ export default function ParentForm() {
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             This simplified form helps identify twice-exceptional
-            characteristics from a parent&apos;s perspective. Please complete all 15
-            questions based on your observations of your child.
+            characteristics from a parent&apos;s perspective. Please complete
+            all 15 questions based on your observations of your child.
           </p>
         </div>
 
@@ -102,14 +99,15 @@ export default function ParentForm() {
             </h3>
             <ul className="text-green-800 dark:text-green-200 space-y-2 text-sm">
               <li>
-                • Think about your child's typical behavior at home and in
+                • Think about your child&apos;s typical behavior at home and in
                 social settings
               </li>
               <li>
                 • Rate each behavior: Never (0), Sometimes (1), Always (2)
               </li>
               <li>
-                • Provide your child's name, a unique ID, and your email address
+                • Provide your child&apos;s name, a unique ID, and your email
+                address
               </li>
               <li>• Be honest and objective in your observations</li>
               <li>• Results are for educational screening purposes only</li>

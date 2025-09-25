@@ -1,9 +1,6 @@
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export default function TeacherForm() {
-  const t = useTranslations("TeacherForm");
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-20">
       <div className="container mx-auto px-4 max-w-4xl">
