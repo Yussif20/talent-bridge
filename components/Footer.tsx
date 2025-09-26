@@ -59,7 +59,7 @@ export default function Footer() {
             <h3 className="text-xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200">
               {footer("quickLinks")}
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 flex flex-col items-center md:items-start">
               {quickLinks.map((link) => (
                 <li
                   key={link.href}

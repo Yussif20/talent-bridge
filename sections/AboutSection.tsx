@@ -114,29 +114,31 @@ export default function AboutSection() {
               </div>
             </div>
 
-            <Link
-              href={`/${locale}/about`}
-              className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-            >
-              {locale === "ar" ? "اعرف المزيد" : "Learn More"}
-              <svg
-                className={`w-5 h-5 ${
-                  locale === "ar" ? "mr-2" : "ml-2"
-                } group-hover:translate-x-1 transition-transform duration-300 ${
-                  locale === "ar" ? "rotate-180" : ""
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex justify-center lg:justify-start">
+              <Link
+                href={`/${locale}/about`}
+                className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </Link>
+                {locale === "ar" ? "اعرف المزيد" : "Learn More"}
+                <svg
+                  className={`w-5 h-5 ${
+                    locale === "ar" ? "mr-2" : "ml-2"
+                  } group-hover:translate-x-1 transition-transform duration-300 ${
+                    locale === "ar" ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </Link>
+            </div>
           </div>
 
           {/* Visual side */}
