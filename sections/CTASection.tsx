@@ -7,7 +7,7 @@ export default function CTASection() {
   const locale = useLocale();
 
   return (
-    <section className="py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 relative overflow-hidden">
+    <section className="cta-force-dark-text py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-900/20 to-purple-900/20"></div>
       <div className="absolute top-20 right-10 w-72 h-72 bg-white/5 rounded-full blur-3xl"></div>
@@ -33,7 +33,7 @@ export default function CTASection() {
               : "Start Your Assessment Journey Today"}
           </h2>
 
-          <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-white mb-12 max-w-3xl mx-auto leading-relaxed">
             {locale === "ar"
               ? "اكتشف القدرات الخفية لطلابك واحصل على تقييم شامل يساعد في تطوير خطة تعليمية مخصصة لكل طالب"
               : "Discover your students' hidden potential and get comprehensive assessments that help develop personalized educational plans"}
@@ -43,7 +43,7 @@ export default function CTASection() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
             <Link
               href={`/${locale}/teacher-form`}
-              className="group relative px-8 py-4 bg-white text-blue-600 rounded-2xl font-semibold text-lg shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
+              className="group relative px-8 py-4 bg-white text-blue-900 rounded-2xl font-semibold text-lg shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative flex items-center">
@@ -67,7 +67,6 @@ export default function CTASection() {
                 </svg>
               </div>
             </Link>
-
             <Link
               href={`/${locale}/parent-form`}
               className="group relative px-8 py-4 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 rounded-2xl font-semibold text-lg hover:bg-white/20 transform hover:scale-105 transition-all duration-300 overflow-hidden"
@@ -103,7 +102,7 @@ export default function CTASection() {
               <h3 className="text-lg font-semibold text-white mb-2">
                 {locale === "ar" ? "سريع وسهل" : "Quick & Easy"}
               </h3>
-              <p className="text-blue-100 text-sm">
+              <p className="text-gray-200 text-sm">
                 {locale === "ar"
                   ? "يستغرق 10-15 دقيقة فقط"
                   : "Takes only 10-15 minutes"}
@@ -115,7 +114,7 @@ export default function CTASection() {
               <h3 className="text-lg font-semibold text-white mb-2">
                 {locale === "ar" ? "مبني علمياً" : "Scientifically Based"}
               </h3>
-              <p className="text-blue-100 text-sm">
+              <p className="text-gray-200 text-sm">
                 {locale === "ar"
                   ? "مطور بواسطة خبراء تربويين"
                   : "Developed by educational experts"}
@@ -127,7 +126,7 @@ export default function CTASection() {
               <h3 className="text-lg font-semibold text-white mb-2">
                 {locale === "ar" ? "تقرير مفصل" : "Detailed Report"}
               </h3>
-              <p className="text-blue-100 text-sm">
+              <p className="text-gray-200 text-sm">
                 {locale === "ar"
                   ? "نتائج شاملة وتوصيات عملية"
                   : "Comprehensive results & practical recommendations"}
@@ -137,10 +136,10 @@ export default function CTASection() {
 
           {/* Trust indicators */}
           <div className="mt-16 pt-8 border-t border-white/20">
-            <p className="text-blue-100 text-sm mb-4">
+            <p className="text-gray-200 text-sm mb-4">
               {locale === "ar" ? "موثوق من قبل" : "Trusted by"}
             </p>
-            <div className="flex justify-center items-center space-x-8 text-white/60">
+            <div className="flex justify-center items-center space-x-8 text-gray-300">
               <div className="text-2xl">🏫</div>
               <span className="text-sm">
                 500+ {locale === "ar" ? "مدرسة" : "Schools"}

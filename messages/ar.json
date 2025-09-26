@@ -39,6 +39,9 @@
     "termsConditions": "الشروط والأحكام"
   },
   "Switch": {
+    "CTA": {
+      "sectionDescription": "اكتشف القدرات الخفية لطلابك واحصل على تقييم شامل يساعد في تطوير خطة تعليمية مخصصة لكل طالب"
+    },
     "label": "اللغة",
     "toArabic": "العربية",
     "toEnglish": "English"

@@ -39,6 +39,9 @@
     "termsConditions": "Terms & Conditions"
   },
   "Switch": {
+    "CTA": {
+      "sectionDescription": "Discover your students' hidden potential and get comprehensive assessments that help develop personalized educational plans"
+    },
     "label": "Language",
     "toArabic": "Arabic",
     "toEnglish": "English"
