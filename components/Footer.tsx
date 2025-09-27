@@ -37,6 +37,7 @@ export default function Footer() {
                 alt="TalentBridge Logo"
                 width={180}
                 height={90}
+                style={{ width: "auto", height: "auto" }}
                 className="select-none filter brightness-110"
                 priority
                 suppressHydrationWarning
