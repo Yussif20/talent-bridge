@@ -80,45 +80,7 @@
       "processing": "Processing your assessment...",
       "success": "Assessment completed successfully!",
       "error": "There was an error processing your assessment. Please try again."
-    },
-    "disclaimer": "These results are for educational screening purposes only and do not constitute a medical or psychological diagnosis. For comprehensive evaluation, please consult with a qualified professional."
-  },
-  "TeacherForm": {
-    "title": "Teacher Assessment Form",
-    "subtitle": "Help us identify twice-exceptional characteristics in your students",
-    "instructions": {
-      "title": "Instructions for Teachers",
-      "items": [
-        "Think about the student's typical behavior in classroom and academic settings",
-        "Rate each behavior based on how often you observe it",
-        "Be objective and consider the student's age-appropriate expectations",
-        "Results are for educational screening purposes only"
-      ]
-    },
-    "form": {
-      "studentName": "Student's Name",
-      "studentAge": "Student's Age",
-      "teacherEmail": "Your Email Address",
-      "questions": {
-        "title": "Academic & Behavioral Characteristics",
-        "subtitle": "Please rate how often you observe each characteristic in this student"
-      },
-      "options": {
-        "never": "Never (0)",
-        "sometimes": "Sometimes (1)",
-        "always": "Always (2)"
-      },
-      "submit": "Submit Assessment",
-      "submitting": "Submitting...",
-      "required": "This field is required"
-    },
-    "results": {
-      "title": "Assessment Results",
-      "processing": "Processing your assessment...",
-      "success": "Assessment completed successfully!",
-      "error": "There was an error processing your assessment. Please try again."
-    },
-    "disclaimer": "These results are for educational screening purposes only and do not constitute a medical or psychological diagnosis. For comprehensive evaluation, please consult with a qualified professional."
+    }
   },
   "Slogans": {
     "branchesCloser": "Your branches closer to your customers",
