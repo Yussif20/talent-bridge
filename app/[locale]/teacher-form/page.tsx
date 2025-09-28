@@ -1077,44 +1077,119 @@ export default function TeacherForm() {
 
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
         {/* Progress bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            {["basic", "general", "disability-select", "disability-form"].map(
-              (step, index) => (
-                <div key={step} className="flex items-center">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      currentStep === step
-                        ? "bg-blue-600 text-white"
-                        : [
+        <div className="mb-6 md:mb-8">
+          {/* Mobile Progress Bar */}
+          <div className="block md:hidden">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {locale === "ar" ? "الخطوة" : "Step"}{" "}
+                {[
+                  "basic",
+                  "general",
+                  "disability-select",
+                  "disability-form",
+                ].indexOf(currentStep) + 1}
+                {locale === "ar" ? " من " : " of "} 4
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div
+                className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out"
+                style={{
+                  width: `${
+                    (([
+                      "basic",
+                      "general",
+                      "disability-select",
+                      "disability-form",
+                    ].indexOf(currentStep) +
+                      1) /
+                      4) *
+                    100
+                  }%`,
+                }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Desktop Progress Bar */}
+          <div className="hidden md:block">
+            <div className="flex items-center justify-center max-w-2xl mx-auto mb-4">
+              {["basic", "general", "disability-select", "disability-form"].map(
+                (step, index) => (
+                  <div key={step} className="flex items-center">
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-sm lg:text-base font-bold transition-all duration-300 ${
+                          currentStep === step
+                            ? "bg-blue-600 text-white shadow-lg scale-110"
+                            : [
+                                "basic",
+                                "general",
+                                "disability-select",
+                                "disability-form",
+                              ].indexOf(currentStep) > index
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
+                        }`}
+                      >
+                        {currentStep === step ? (
+                          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                        ) : [
+                            "basic",
+                            "general",
+                            "disability-select",
+                            "disability-form",
+                          ].indexOf(currentStep) > index ? (
+                          <svg
+                            className="w-5 h-5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        ) : (
+                          index + 1
+                        )}
+                      </div>
+                      <span
+                        className={`text-xs lg:text-sm mt-2 font-medium text-center max-w-20 leading-tight ${
+                          currentStep === step
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-500 dark:text-gray-400"
+                        }`}
+                      >
+                        {index === 0 &&
+                          (locale === "ar" ? "المعلومات" : "Info")}
+                        {index === 1 && (locale === "ar" ? "عام" : "General")}
+                        {index === 2 &&
+                          (locale === "ar" ? "الإعاقة" : "Category")}
+                        {index === 3 && (locale === "ar" ? "خاص" : "Specific")}
+                      </span>
+                    </div>
+                    {index < 3 && (
+                      <div
+                        className={`flex-1 h-1 mx-3 lg:mx-4 rounded-full transition-all duration-500 ${
+                          [
                             "basic",
                             "general",
                             "disability-select",
                             "disability-form",
                           ].indexOf(currentStep) > index
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-300 text-gray-600"
-                    }`}
-                  >
-                    {index + 1}
+                            ? "bg-gradient-to-r from-green-400 to-green-500"
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}
+                        style={{ minWidth: "2rem" }}
+                      ></div>
+                    )}
                   </div>
-                  {index < 3 && (
-                    <div
-                      className={`w-24 h-1 mx-2 ${
-                        [
-                          "basic",
-                          "general",
-                          "disability-select",
-                          "disability-form",
-                        ].indexOf(currentStep) > index
-                          ? "bg-green-500"
-                          : "bg-gray-300"
-                      }`}
-                    ></div>
-                  )}
-                </div>
-              )
-            )}
+                )
+              )}
+            </div>
           </div>
         </div>
 
