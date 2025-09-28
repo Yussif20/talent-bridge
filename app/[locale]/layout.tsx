@@ -55,7 +55,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <body className="min-h-screen py-12 bg-gray-50 dark:bg-gray-900">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div className="flex flex-col min-h-screen">
             <Header />
