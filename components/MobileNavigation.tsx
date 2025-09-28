@@ -15,7 +15,6 @@ export default function MobileNavigation() {
     { name: t("home"), href: `/${locale}` },
     { name: t("teacherForm"), href: `/${locale}/teacher-form` },
     { name: t("parentForm"), href: `/${locale}/parent-form` },
-    { name: t("about"), href: `/${locale}/about` },
   ];
 
   const isActive = (href: string) => {

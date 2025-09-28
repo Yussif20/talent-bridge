@@ -6,8 +6,10 @@ import Link from "next/link";
 
 interface FormData {
   childName: string;
-  childAge: string;
-  parentEmail: string;
+  grade: string;
+  gender: string;
+  parentName: string;
+  birthDate: string;
   answers: number[];
 }
 
@@ -22,8 +24,10 @@ export default function ParentForm() {
   const t = useTranslations("ParentForm");
   const [formData, setFormData] = useState<FormData>({
     childName: "",
-    childAge: "",
-    parentEmail: "",
+    grade: "",
+    gender: "",
+    parentName: "",
+    birthDate: "",
     answers: new Array(15).fill(-1),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,64 +37,64 @@ export default function ParentForm() {
   // Parent assessment questions
   const questions = [
     {
-      en: "Shows advanced vocabulary for their age",
-      ar: "يُظهر مفردات متقدمة لعمره",
+      en: "My child shows distinctive abilities or interests in specific areas (such as mathematics, art, technology...).",
+      ar: "يُظهر ابني/ابنتي قدرات أو اهتمامات مميزة في مجالات معينة (مثل الرياضيات، الفن، التكنولوجيا…).",
     },
     {
-      en: "Demonstrates exceptional problem-solving abilities",
-      ar: "يُظهر قدرات استثنائية في حل المشكلات",
+      en: "Asks deep or unusual questions that show advanced thinking.",
+      ar: "يطرح أسئلة عميقة أو غير مألوفة تدل على تفكير متقدم.",
     },
     {
-      en: "Has difficulty with social interactions",
-      ar: "يواجه صعوبة في التفاعلات الاجتماعية",
+      en: "Shows contrast between excellence in some areas and clear difficulties in others.",
+      ar: "يظهر تباينًا بين تفوقه في بعض المجالات وصعوبات واضحة في مجالات أخرى.",
     },
     {
-      en: "Shows intense focus on specific interests",
-      ar: "يُظهر تركيزاً مكثفاً على اهتمامات محددة",
+      en: "Shows feelings of frustration or low self-confidence due to this gap.",
+      ar: "يُبدي مشاعر إحباط أو انخفاض ثقة بالنفس بسبب هذه الفجوة.",
     },
     {
-      en: "Exhibits emotional sensitivity or overreactions",
-      ar: "يُظهر حساسية عاطفية أو ردود فعل مفرطة",
+      en: "Interacts enthusiastically with creative or exploratory activities.",
+      ar: "يتفاعل بحماس مع الأنشطة الإبداعية أو الاستكشافية.",
     },
     {
-      en: "Has trouble organizing tasks or activities",
-      ar: "يواجه صعوبة في تنظيم المهام أو الأنشطة",
+      en: "Has difficulty concentrating or organizing daily tasks.",
+      ar: "يواجه صعوبة في التركيز أو تنظيم المهام اليومية.",
     },
     {
-      en: "Shows creative or imaginative thinking",
-      ar: "يُظهر تفكيراً إبداعياً أو خيالياً",
+      en: "Suffers from difficulties in reading or writing compared to their level in conversation or comprehension.",
+      ar: "يعاني من صعوبات في القراءة أو الكتابة مقارنة بمستواه في المحادثة أو الفهم.",
     },
     {
-      en: "Has difficulty following multi-step instructions",
-      ar: "يواجه صعوبة في اتباع التعليمات متعددة الخطوات",
+      en: "Prefers individual work or isolation over group activities.",
+      ar: "يفضّل العمل الفردي أو العزلة على الأنشطة الجماعية.",
     },
     {
-      en: "Demonstrates advanced reasoning skills",
-      ar: "يُظهر مهارات استدلال متقدمة",
+      en: "Shows distraction or hyperactivity, but focuses deeply when doing what they love.",
+      ar: "يظهر تشتتًا أو فرط حركة، لكنه يركز بعمق عند ممارسة ما يحبه.",
     },
     {
-      en: "Struggles with attention or focus",
-      ar: "يعاني من مشاكل في الانتباه أو التركيز",
+      en: "Shows unexpected or different responses in social situations.",
+      ar: "يُظهر استجابات غير متوقعة أو مختلفة في المواقف الاجتماعية.",
     },
     {
-      en: "Shows exceptional memory in areas of interest",
-      ar: "يُظهر ذاكرة استثنائية في مجالات الاهتمام",
+      en: "Has rich vocabulary or way of expression compared to their age.",
+      ar: "لديه مفردات أو طريقة تعبير غنية مقارنة بعمره.",
     },
     {
-      en: "Has difficulty with handwriting or fine motor skills",
-      ar: "يواجه صعوبة في الكتابة أو المهارات الحركية الدقيقة",
+      en: "Shows speed in learning new concepts or solving practical problems.",
+      ar: "يظهر سرعة في تعلم مفاهيم جديدة أو في حل المشكلات العملية.",
     },
     {
-      en: "Demonstrates advanced understanding of complex concepts",
-      ar: "يُظهر فهماً متقدماً للمفاهيم المعقدة",
+      en: "Uses unconventional methods to express themselves (drawing, writing, creating solutions).",
+      ar: "يستخدم أساليب غير تقليدية للتعبير عن نفسه (رسم، كتابة، ابتكار حلول).",
     },
     {
-      en: "Shows repetitive behaviors or rigid routines",
-      ar: "يُظهر سلوكيات متكررة أو روتين جامد",
+      en: "Shows creativity or many diverse ideas in a short time.",
+      ar: "يبدي إبداعًا أو أفكارًا كثيرة ومتنوعة خلال وقت قصير.",
     },
     {
-      en: "Exhibits perfectionist tendencies",
-      ar: "يُظهر نزعات كمالية",
+      en: "Shows artistic sense or special inclinations in specific areas (music, design, scientific experiments...).",
+      ar: "يظهر حسًا فنيًا أو ميولًا خاصة في مجالات محددة (الموسيقى، التصميم، التجارب العلمية…).",
     },
   ];
 
@@ -117,7 +121,13 @@ export default function ParentForm() {
     setError(null);
 
     // Validate form
-    if (!formData.childName || !formData.childAge || !formData.parentEmail) {
+    if (
+      !formData.childName ||
+      !formData.grade ||
+      !formData.gender ||
+      !formData.parentName ||
+      !formData.birthDate
+    ) {
       setError(t("form.required"));
       setIsSubmitting(false);
       return;
@@ -344,7 +354,7 @@ export default function ParentForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t("form.childName")} *
+                  {locale === "ar" ? "اسم الطالب" : "Student Name"} *
                 </label>
                 <input
                   type="text"
@@ -359,15 +369,66 @@ export default function ParentForm() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t("form.childAge")} *
+                  {locale === "ar" ? "الصف الدراسي" : "Grade Level"} *
                 </label>
                 <input
-                  type="number"
-                  min="3"
-                  max="18"
-                  value={formData.childAge}
+                  type="text"
+                  value={formData.grade}
+                  onChange={(e) => handleInputChange("grade", e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {locale === "ar" ? "الجنس" : "Gender"} *
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="male"
+                      checked={formData.gender === "male"}
+                      onChange={(e) =>
+                        handleInputChange("gender", e.target.value)
+                      }
+                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    />
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
+                      {locale === "ar" ? "ذكر" : "Male"}
+                    </span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="female"
+                      checked={formData.gender === "female"}
+                      onChange={(e) =>
+                        handleInputChange("gender", e.target.value)
+                      }
+                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    />
+                    <span className="ml-2 text-gray-700 dark:text-gray-300">
+                      {locale === "ar" ? "أنثى" : "Female"}
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {locale === "ar" ? "اسم ولي الأمر" : "Parent Name"} *
+                </label>
+                <input
+                  type="text"
+                  value={formData.parentName}
                   onChange={(e) =>
-                    handleInputChange("childAge", e.target.value)
+                    handleInputChange("parentName", e.target.value)
                   }
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
                   required
@@ -377,14 +438,12 @@ export default function ParentForm() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {t("form.parentEmail")} *
+                {locale === "ar" ? "تاريخ الميلاد" : "Birth Date"} *
               </label>
               <input
-                type="email"
-                value={formData.parentEmail}
-                onChange={(e) =>
-                  handleInputChange("parentEmail", e.target.value)
-                }
+                type="date"
+                value={formData.birthDate}
+                onChange={(e) => handleInputChange("birthDate", e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
                 required
               />
@@ -406,31 +465,43 @@ export default function ParentForm() {
                   key={index}
                   className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 border border-gray-200 dark:border-gray-600"
                 >
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                    {index + 1}. {locale === "ar" ? question.ar : question.en}
-                  </h3>
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                        {index + 1}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4 leading-relaxed">
+                        {locale === "ar" ? question.ar : question.en}
+                      </h3>
 
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    {[0, 1, 2].map((value) => (
-                      <label
-                        key={value}
-                        className="flex items-center space-x-3 cursor-pointer group"
-                      >
-                        <input
-                          type="radio"
-                          name={`question-${index}`}
-                          value={value}
-                          checked={formData.answers[index] === value}
-                          onChange={() => handleAnswerChange(index, value)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                        />
-                        <span className="text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          {value === 0 && t("form.options.never")}
-                          {value === 1 && t("form.options.sometimes")}
-                          {value === 2 && t("form.options.always")}
-                        </span>
-                      </label>
-                    ))}
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        {[0, 1, 2].map((value) => (
+                          <label
+                            key={value}
+                            className="flex items-center space-x-3 cursor-pointer group"
+                          >
+                            <input
+                              type="radio"
+                              name={`question-${index}`}
+                              value={value}
+                              checked={formData.answers[index] === value}
+                              onChange={() => handleAnswerChange(index, value)}
+                              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                            />
+                            <span className="text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                              {value === 0 &&
+                                (locale === "ar" ? "لا ينطبق" : "Never")}
+                              {value === 1 &&
+                                (locale === "ar" ? "أحياناً" : "Sometimes")}
+                              {value === 2 &&
+                                (locale === "ar" ? "دائماً" : "Always")}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
