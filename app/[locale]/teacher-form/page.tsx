@@ -122,6 +122,7 @@ export default function TeacherForm() {
     switch (currentStep) {
       case "basic":
         if (validateBasicInfo()) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
           setCurrentStep("general");
           setError(null);
         } else {
@@ -197,12 +198,14 @@ export default function TeacherForm() {
                 disabilityPercent: 0,
                 planFile: undefined,
               });
+              window.scrollTo({ top: 0, behavior: "smooth" });
               setCurrentStep("results");
             })
             .catch((error) => {
               setError(error.message);
             });
         } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
           setCurrentStep("disability-select");
         }
         setError(null);
@@ -210,6 +213,7 @@ export default function TeacherForm() {
       }
       case "disability-select":
         if (formData.selectedDisability) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
           setCurrentStep("disability-form");
           setError(null);
         } else {
@@ -237,12 +241,15 @@ export default function TeacherForm() {
   const prevStep = () => {
     switch (currentStep) {
       case "general":
+        window.scrollTo({ top: 0, behavior: "smooth" });
         setCurrentStep("basic");
         break;
       case "disability-select":
+        window.scrollTo({ top: 0, behavior: "smooth" });
         setCurrentStep("general");
         break;
       case "disability-form":
+        window.scrollTo({ top: 0, behavior: "smooth" });
         setCurrentStep("disability-select");
         break;
     }
@@ -292,7 +299,7 @@ export default function TeacherForm() {
         "borderline-intelligence": "Borderline-Intelligence",
         "hearing-impairment": "Hearing-Impairment",
         "learning-difficulties": "Learning-Disabilities",
-        "visual-impairment": "Visual-ImpairmentBraille",
+        "visual-impairment": "Visual-Impairment-Braille",
         "physical-disability": "Physical-Disability",
         "multiple-disabilities": "Multiple-Disabilities",
         "intellectual-disability": "Mild-Intellectual-Disability",
@@ -343,6 +350,7 @@ export default function TeacherForm() {
         disabilityPercent: Number(disabilityPercent.toFixed(1)),
         planFile: formData.selectedDisability,
       });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       setCurrentStep("results");
     } catch (error) {
       const errorMessage =
