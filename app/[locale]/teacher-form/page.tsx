@@ -235,48 +235,6 @@ export default function TeacherForm() {
       ],
       "hearing-impairment": [
         {
-          ar: "يُظهر قدرات بصرية عالية في التعلم والفهم",
-          en: "Shows high visual abilities in learning and understanding",
-        },
-        {
-          ar: "يتفوق في المهام التي تعتمد على الملاحظة البصرية والتفاصيل",
-          en: "Excels in tasks that rely on visual observation and details",
-        },
-        {
-          ar: "يستخدم الإشارات أو الرسوم للتعبير عن أفكار معقدة بوضوح",
-          en: "Uses gestures or drawings to express complex ideas clearly",
-        },
-        {
-          ar: "يُظهر فهمًا عميقًا للمفاهيم المجردة عند عرضها بصريًا",
-          en: "Shows deep understanding of abstract concepts when presented visually",
-        },
-        {
-          ar: "يميل إلى التركيز الشديد على المهام البصرية لفترات طويلة",
-          en: "Tends to focus intensely on visual tasks for long periods",
-        },
-        {
-          ar: "يبدع في الأنشطة الفنية أو التصميمية أو التكنولوجية",
-          en: "Excels in artistic, design, or technological activities",
-        },
-        {
-          ar: "يتفاعل إيجابيًا مع التعلم التفاعلي والألعاب التعليمية البصرية",
-          en: "Responds positively to interactive learning and visual educational games",
-        },
-        {
-          ar: "يُظهر مهارات قوية في حل المشكلات عند استخدام الأدوات البصرية",
-          en: "Shows strong problem-solving skills when using visual tools",
-        },
-        {
-          ar: "يعبر عن الإحباط عندما تكون المعلومات غير مصحوبة بدعم بصري",
-          en: "Expresses frustration when information is not accompanied by visual support",
-        },
-        {
-          ar: "يتميز بذاكرة بصرية قوية ويتذكر التفاصيل البصرية بدقة",
-          en: "Has strong visual memory and remembers visual details accurately",
-        },
-      ],
-      "visual-impairment": [
-        {
           ar: "يُظهر قدرات سمعية متقدمة في التعلم والاستيعاب",
           en: "Shows advanced auditory abilities in learning and comprehension",
         },
@@ -315,6 +273,48 @@ export default function TeacherForm() {
         {
           ar: "يعاني من الإحباط عند عدم توفر المواد التعليمية بتنسيقات يمكن الوصول إليها",
           en: "Gets frustrated when educational materials are not available in accessible formats",
+        },
+      ],
+      "visual-impairment": [
+        {
+          ar: "يُظهر قدرات بصرية عالية في التعلم والفهم",
+          en: "Shows high visual abilities in learning and understanding",
+        },
+        {
+          ar: "يتفوق في المهام التي تعتمد على الملاحظة البصرية والتفاصيل",
+          en: "Excels in tasks that rely on visual observation and details",
+        },
+        {
+          ar: "يستخدم الإشارات أو الرسوم للتعبير عن أفكار معقدة بوضوح",
+          en: "Uses gestures or drawings to express complex ideas clearly",
+        },
+        {
+          ar: "يُظهر فهمًا عميقًا للمفاهيم المجردة عند عرضها بصريًا",
+          en: "Shows deep understanding of abstract concepts when presented visually",
+        },
+        {
+          ar: "يميل إلى التركيز الشديد على المهام البصرية لفترات طويلة",
+          en: "Tends to focus intensely on visual tasks for long periods",
+        },
+        {
+          ar: "يبدع في الأنشطة الفنية أو التصميمية أو التكنولوجية",
+          en: "Excels in artistic, design, or technological activities",
+        },
+        {
+          ar: "يتفاعل إيجابيًا مع التعلم التفاعلي والألعاب التعليمية البصرية",
+          en: "Responds positively to interactive learning and visual educational games",
+        },
+        {
+          ar: "يُظهر مهارات قوية في حل المشكلات عند استخدام الأدوات البصرية",
+          en: "Shows strong problem-solving skills when using visual tools",
+        },
+        {
+          ar: "يعبر عن الإحباط عندما تكون المعلومات غير مصحوبة بدعم بصري",
+          en: "Expresses frustration when information is not accompanied by visual support",
+        },
+        {
+          ar: "يتميز بذاكرة بصرية قوية ويتذكر التفاصيل البصرية بدقة",
+          en: "Has strong visual memory and remembers visual details accurately",
         },
       ],
       "intellectual-disability": [
