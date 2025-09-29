@@ -32,6 +32,9 @@ interface ApiResponse {
   result: number;
   evaluation: string;
   disability: string;
+  talentPercent?: number;
+  disabilityPercent?: number;
+  planFile?: string;
 }
 
 type FormStep =
@@ -43,7 +46,6 @@ type FormStep =
 
 export default function TeacherForm() {
   const locale = useLocale();
-  // Calculate max birthdate for age < 18 (today minus 18 years)
   const today = new Date();
   const maxBirthDateObj = new Date(
     today.getFullYear() - 18,
@@ -52,7 +54,13 @@ export default function TeacherForm() {
   );
   const maxBirthDate = maxBirthDateObj.toISOString().slice(0, 10);
 
-  // Form state management
+  const formSteps: FormStep[] = [
+    "basic",
+    "general",
+    "disability-select",
+    "disability-form",
+  ];
+
   const [currentStep, setCurrentStep] = useState<FormStep>("basic");
   const [formData, setFormData] = useState<FormData>({
     basicInfo: {
@@ -72,7 +80,6 @@ export default function TeacherForm() {
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Form handlers
   const handleBasicInfoChange = (field: keyof BasicInfo, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -134,18 +141,14 @@ export default function TeacherForm() {
           );
           break;
         }
-        // Parent form scoring system: never=0, sometimes=5%, always=10%
         const totalPoints = formData.generalAnswers.reduce((sum, answer) => {
           if (answer === 0) return sum + 0;
           if (answer === 1) return sum + 5;
           if (answer === 2) return sum + 10;
           return sum;
         }, 0);
-        // 10 questions × 10% = 100%
         const percentage = totalPoints;
         if (percentage < 60) {
-          // Prepare API request body for untalented path
-          const today = new Date();
           const yyyyMmDd = today.toISOString().slice(0, 10);
           const requestBody = {
             name: formData.basicInfo.studentName,
@@ -172,6 +175,10 @@ export default function TeacherForm() {
           })
             .then((response) => {
               if (!response.ok) {
+                console.log(
+                  "Submitting survey with name:",
+                  formData.basicInfo.studentName
+                );
                 return response.text().then((errorText) => {
                   throw new Error(`HTTP ${response.status}: ${errorText}`);
                 });
@@ -186,6 +193,9 @@ export default function TeacherForm() {
                     ? `النسبة المئوية للموهبة: ${percentage}%\nمقياس النتائج يشير إلى وجود مؤشرات تتعلق بالإعاقة فقط، وعدم كفاية مؤشرات الموهبة في الوقت الحالي. هذا لا يتعارض مع إمكانية وجود قدرات مميزة في المستقبل، ونوصي بمتابعة التقدم مع الفريق المتخصص في مدرستك.`
                     : `Talent percentage: ${percentage}%\nThe scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school.`,
                 disability: "",
+                talentPercent: percentage,
+                disabilityPercent: 0,
+                planFile: undefined,
               });
               setCurrentStep("results");
             })
@@ -242,42 +252,58 @@ export default function TeacherForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError(null);
+    console.log("Submitting survey with name:", formData.basicInfo.studentName);
 
     try {
-      const generalScore = formData.generalAnswers.reduce(
-        (sum, answer) => sum + (answer === -1 ? 0 : answer),
-        0
-      );
+      const generalScore = formData.generalAnswers.reduce((sum, answer) => {
+        if (answer === 0) return sum + 0;
+        if (answer === 1) return sum + 5;
+        if (answer === 2) return sum + 10;
+        return sum;
+      }, 0);
       const disabilityScore = formData.disabilityAnswers.reduce(
-        (sum, answer) => sum + (answer === -1 ? 0 : answer),
+        (sum, answer) => {
+          if (answer === 0) return sum + 0;
+          if (answer === 1) return sum + 5;
+          if (answer === 2) return sum + 10;
+          return sum;
+        },
         0
       );
       const totalScore = generalScore + disabilityScore;
 
-      let evaluation = "";
-      let disability = "";
+      const maxDisabilityScore = formData.disabilityAnswers.length * 10;
+      const disabilityPercent =
+        maxDisabilityScore > 0
+          ? (disabilityScore / maxDisabilityScore) * 100
+          : 0;
 
-      if (totalScore <= 10) {
-        evaluation = "Low indicators of twice-exceptional characteristics";
-        disability = "No significant concerns identified";
-      } else if (totalScore <= 30) {
-        evaluation = "Moderate indicators of twice-exceptional characteristics";
-        disability = "Further assessment recommended";
-      } else {
-        evaluation = "Strong indicators of twice-exceptional characteristics";
-        disability = "Professional evaluation recommended";
-      }
+      // Use today's date as checkupDate
+      const today = new Date();
+      const yyyyMmDd = today.toISOString().slice(0, 10);
+
+      // Determine isTalented based on generalScore percentage
+      const talentPercent = Number(generalScore.toFixed(2));
+      const isTalented = talentPercent >= 60;
 
       const requestBody = {
-        result: totalScore,
-        evaluation: evaluation,
-        disability: disability,
+        name: formData.basicInfo.studentName,
+        educationGrade: formData.basicInfo.grade,
+        gender: formData.basicInfo.gender,
+        parentName: formData.basicInfo.examinerName,
+        birthDate: formData.basicInfo.birthDate,
+        checkerName: formData.basicInfo.examinerName,
+        checkupDate: yyyyMmDd,
+        schoolName: formData.basicInfo.schoolName,
+        isTalented: isTalented,
+        talentPercent: talentPercent,
+        isDisabled: true,
+        disability: formData.selectedDisability || "",
+        disabilityPercent: Number(disabilityPercent.toFixed(1)),
         surveyType: "Teachers",
       };
 
-      console.log("Submitting to API:", requestBody);
-
-      const response = await fetch("/api/survey/SurveyResult/Save", {
+      const response = await fetch("/api/survey/surveyresult/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -285,25 +311,23 @@ export default function TeacherForm() {
         body: JSON.stringify(requestBody),
       });
 
-      console.log("API Response status:", response.status);
-
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("API Error response:", errorText);
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
 
-      const apiResult = await response.json();
-      console.log("API Success:", apiResult);
-
       setResult({
         result: totalScore,
-        evaluation: evaluation,
-        disability: disability,
+        evaluation: isTalented
+          ? "Strong indicators of twice-exceptional characteristics"
+          : "Indicators related to disability only",
+        disability: formData.selectedDisability || "",
+        talentPercent: talentPercent,
+        disabilityPercent: Number(disabilityPercent.toFixed(1)),
+        planFile: formData.selectedDisability,
       });
       setCurrentStep("results");
     } catch (error) {
-      console.error("Detailed error:", error);
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       setError(errorMessage);
@@ -320,13 +344,11 @@ export default function TeacherForm() {
     }));
   };
 
-  // Render different steps
   const renderBasicInfoStep = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
         {locale === "ar" ? "بيانات أولية" : "Basic Information"}
       </h2>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -342,7 +364,6 @@ export default function TeacherForm() {
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {locale === "ar" ? "الجنس" : "Gender"} *
@@ -358,6 +379,7 @@ export default function TeacherForm() {
                   handleBasicInfoChange("gender", e.target.value)
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                aria-label={locale === "ar" ? "ذكر" : "Male"}
               />
               <span className="ml-2 text-gray-700 dark:text-gray-300">
                 {locale === "ar" ? "ذكر" : "Male"}
@@ -373,6 +395,7 @@ export default function TeacherForm() {
                   handleBasicInfoChange("gender", e.target.value)
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                aria-label={locale === "ar" ? "أنثى" : "Female"}
               />
               <span className="ml-2 text-gray-700 dark:text-gray-300">
                 {locale === "ar" ? "أنثى" : "Female"}
@@ -380,7 +403,6 @@ export default function TeacherForm() {
             </label>
           </div>
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {locale === "ar" ? "تاريخ الميلاد" : "Birth Date"} *
@@ -389,12 +411,11 @@ export default function TeacherForm() {
             type="date"
             value={formData.basicInfo.birthDate}
             onChange={(e) => handleBasicInfoChange("birthDate", e.target.value)}
-            min={maxBirthDate}
+            max={maxBirthDate}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {locale === "ar" ? "اسم الفاحص" : "Examiner Name"} *
@@ -409,7 +430,6 @@ export default function TeacherForm() {
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {locale === "ar"
@@ -425,7 +445,6 @@ export default function TeacherForm() {
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {locale === "ar" ? "صفة الفاحص" : "Examiner Title"} *
@@ -440,7 +459,6 @@ export default function TeacherForm() {
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {locale === "ar" ? "اسم المدرسة" : "School Name"} *
@@ -455,7 +473,6 @@ export default function TeacherForm() {
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {locale === "ar" ? "الصف الدراسي للطالب" : "Student's Grade Level"}{" "}
@@ -516,10 +533,23 @@ export default function TeacherForm() {
                         checked={formData.generalAnswers[index] === value}
                         onChange={() => handleGeneralAnswerChange(index, value)}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                        aria-label={
+                          value === 0
+                            ? locale === "ar"
+                              ? "لا ينطبق"
+                              : "Never"
+                            : value === 1
+                            ? locale === "ar"
+                              ? "أحياناً"
+                              : "Sometimes"
+                            : locale === "ar"
+                            ? "دائماً"
+                            : "Always"
+                        }
                       />
                       <span className="text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {value === 0 &&
-                          (locale === "ar" ? "لا تنطبق" : "Never")}
+                          (locale === "ar" ? "لا ينطبق" : "Never")}
                         {value === 1 &&
                           (locale === "ar" ? "أحياناً" : "Sometimes")}
                         {value === 2 && (locale === "ar" ? "دائماً" : "Always")}
@@ -584,7 +614,8 @@ export default function TeacherForm() {
   );
 
   const renderDisabilityFormStep = () => {
-    const questions = getDisabilityQuestions(formData.selectedDisability!);
+    if (!formData.selectedDisability) return null;
+    const questions = getDisabilityQuestions(formData.selectedDisability);
     const selectedCategory = disabilityCategories.find(
       (cat) => cat.id === formData.selectedDisability
     );
@@ -629,6 +660,19 @@ export default function TeacherForm() {
                             handleDisabilityAnswerChange(index, value)
                           }
                           className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700"
+                          aria-label={
+                            value === 0
+                              ? locale === "ar"
+                                ? "لا ينطبق"
+                                : "Never"
+                              : value === 1
+                              ? locale === "ar"
+                                ? "أحياناً"
+                                : "Sometimes"
+                              : locale === "ar"
+                              ? "كثيراً"
+                              : "Often"
+                          }
                         />
                         <span className="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                           {value === 0 &&
@@ -674,15 +718,57 @@ export default function TeacherForm() {
           : "Assessment Completed Successfully"}
       </h1>
 
-      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6">
+      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 mb-4">
         <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">
-          {locale === "ar" ? "نتيجة التقييم" : "Assessment Results"}
+          {locale === "ar" ? "نسب التقييم" : "Assessment Percentages"}
         </h3>
-        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-          {typeof result?.result === "number" ? `${result.result}%` : ""}
+        <p className="text-xl font-bold text-green-600 dark:text-green-400 mb-2">
+          {locale === "ar" ? "نسبة الموهبة" : "Talent Percent"}:{" "}
+          {result?.talentPercent?.toFixed(1)}%
         </p>
-        <p className="text-blue-800 dark:text-blue-200">{result?.evaluation}</p>
+        {result?.talentPercent !== undefined && result?.talentPercent >= 60 && (
+          <p className="text-xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+            {locale === "ar" ? "نسبة الإعاقة" : "Disability Percent"}:{" "}
+            {result?.disabilityPercent?.toFixed(1)}%
+          </p>
+        )}
+        {result?.talentPercent !== undefined && result?.talentPercent < 60 && (
+          <p className="text-base text-blue-900 dark:text-blue-300 mt-4">
+            {locale === "ar"
+              ? "تشير نتائج المقياس إلى وجود مؤشرات مرتبطة بالإعاقة فقط، ولم تظهر مؤشرات كافية للموهبة في الوقت الحالي. هذا لا يتنافى مع إمكانية وجود قدرات مميزة مستقبلاً، ونوصي بمتابعة التقدم مع الفريق المختص في مدرستكم."
+              : "The scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school."}
+          </p>
+        )}
       </div>
+
+      {result?.planFile && (
+        <button
+          onClick={() => {
+            const fileName = result.planFile;
+            if (!fileName) return;
+            const link = document.createElement("a");
+            link.href = `/${locale}/${fileName}.docx`;
+            link.download = fileName;
+            link.click();
+          }}
+          className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors inline-flex items-center gap-2 mt-6"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          {locale === "ar" ? "تحميل الخطة الفردية" : "Download Individual Plan"}
+        </button>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
         <Link
@@ -691,12 +777,28 @@ export default function TeacherForm() {
         >
           {locale === "ar" ? "العودة للرئيسية" : "Back to Home"}
         </Link>
-        <Link
-          href={`/${locale}/parent-form`}
-          className="px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-        >
-          {locale === "ar" ? "استمارة ولي الأمر" : "Parent Form"}
-        </Link>
+      </div>
+    </div>
+  );
+
+  const renderProgressBar = () => (
+    <div className="block md:hidden">
+      <div className="flex items-center justify-center space-x-2 mb-4">
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          {locale === "ar" ? "الخطوة" : "Step"}{" "}
+          {formSteps.indexOf(currentStep) + 1}
+          {locale === "ar" ? " من " : " of "} {formSteps.length}
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div
+          className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out"
+          style={{
+            width: `${
+              ((formSteps.indexOf(currentStep) + 1) / formSteps.length) * 100
+            }%`,
+          }}
+        ></div>
       </div>
     </div>
   );
@@ -715,125 +817,70 @@ export default function TeacherForm() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
-      {/* Background elements */}
       <div className="absolute top-20 right-10 w-72 h-72 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/10 dark:to-purple-900/10 rounded-full blur-3xl opacity-60"></div>
       <div className="absolute bottom-20 left-10 w-96 h-96 bg-gradient-to-tr from-green-100 to-blue-100 dark:from-green-900/10 dark:to-blue-900/10 rounded-full blur-3xl opacity-40"></div>
 
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
         {/* Progress bar */}
-        <div className="mb-6 md:mb-8">
-          {/* Mobile Progress Bar */}
-          <div className="block md:hidden">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {locale === "ar" ? "الخطوة" : "Step"}{" "}
-                {[
-                  "basic",
-                  "general",
-                  "disability-select",
-                  "disability-form",
-                ].indexOf(currentStep) + 1}
-                {locale === "ar" ? " من " : " of "} 4
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div
-                className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 ease-out"
-                style={{
-                  width: `${
-                    (([
-                      "basic",
-                      "general",
-                      "disability-select",
-                      "disability-form",
-                    ].indexOf(currentStep) +
-                      1) /
-                      4) *
-                    100
-                  }%`,
-                }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Desktop Progress Bar */}
-          <div className="hidden md:block">
-            <div className="flex items-center justify-center max-w-2xl mx-auto mb-4">
-              {["basic", "general", "disability-select", "disability-form"].map(
-                (step, index) => (
-                  <div key={step} className="flex items-center">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-sm lg:text-base font-bold transition-all duration-300 ${
-                          currentStep === step
-                            ? "bg-blue-600 text-white shadow-lg scale-110"
-                            : [
-                                "basic",
-                                "general",
-                                "disability-select",
-                                "disability-form",
-                              ].indexOf(currentStep) > index
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
-                        }`}
+        {renderProgressBar()}
+        {/* Desktop Progress Bar */}
+        <div className="hidden md:block">
+          <div className="flex items-center justify-center max-w-2xl mx-auto mb-4">
+            {formSteps.map((step, index) => (
+              <div key={step} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-sm lg:text-base font-bold transition-all duration-300 ${
+                      currentStep === step
+                        ? "bg-blue-600 text-white shadow-lg scale-110"
+                        : formSteps.indexOf(currentStep) > index
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
+                    }`}
+                  >
+                    {currentStep === step ? (
+                      <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    ) : formSteps.indexOf(currentStep) > index ? (
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
                       >
-                        {currentStep === step ? (
-                          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                        ) : [
-                            "basic",
-                            "general",
-                            "disability-select",
-                            "disability-form",
-                          ].indexOf(currentStep) > index ? (
-                          <svg
-                            className="w-5 h-5"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        ) : (
-                          index + 1
-                        )}
-                      </div>
-                      <span
-                        className={`text-xs lg:text-sm mt-2 font-medium text-center max-w-20 leading-tight ${
-                          currentStep === step
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-gray-500 dark:text-gray-400"
-                        }`}
-                      >
-                        {index === 0 &&
-                          (locale === "ar" ? "المعلومات" : "Info")}
-                        {index === 1 && (locale === "ar" ? "عام" : "General")}
-                        {index === 2 &&
-                          (locale === "ar" ? "الإعاقة" : "Category")}
-                        {index === 3 && (locale === "ar" ? "خاص" : "Specific")}
-                      </span>
-                    </div>
-                    {index < 3 && (
-                      <div
-                        className={`flex-1 h-1 mx-3 lg:mx-4 rounded-full transition-all duration-500 ${
-                          [
-                            "basic",
-                            "general",
-                            "disability-select",
-                            "disability-form",
-                          ].indexOf(currentStep) > index
-                            ? "bg-gradient-to-r from-green-400 to-green-500"
-                            : "bg-gray-200 dark:bg-gray-700"
-                        }`}
-                        style={{ minWidth: "2rem" }}
-                      ></div>
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    ) : (
+                      index + 1
                     )}
                   </div>
-                )
-              )}
-            </div>
+                  <span
+                    className={`text-xs lg:text-sm mt-2 font-medium text-center max-w-20 leading-tight ${
+                      currentStep === step
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-500 dark:text-gray-400"
+                    }`}
+                  >
+                    {index === 0 && (locale === "ar" ? "المعلومات" : "Info")}
+                    {index === 1 && (locale === "ar" ? "عام" : "General")}
+                    {index === 2 && (locale === "ar" ? "الإعاقة" : "Category")}
+                    {index === 3 && (locale === "ar" ? "خاص" : "Specific")}
+                  </span>
+                </div>
+                {index < formSteps.length - 1 && (
+                  <div
+                    className={`flex-1 h-1 mx-3 lg:mx-4 rounded-full transition-all duration-500 ${
+                      formSteps.indexOf(currentStep) > index
+                        ? "bg-gradient-to-r from-green-400 to-green-500"
+                        : "bg-gray-200 dark:bg-gray-700"
+                    }`}
+                    style={{ minWidth: "2rem" }}
+                  ></div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -859,14 +906,12 @@ export default function TeacherForm() {
             renderDisabilitySelectionStep()}
           {currentStep === "disability-form" && renderDisabilityFormStep()}
 
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
               <p className="text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
 
-          {/* Navigation Buttons */}
           <div className="flex justify-between mt-8">
             <button
               onClick={prevStep}
@@ -909,12 +954,6 @@ export default function TeacherForm() {
             className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             {locale === "ar" ? "العودة للرئيسية" : "Back to Home"}
-          </Link>
-          <Link
-            href={`/${locale}/parent-form`}
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
-          >
-            {locale === "ar" ? "استمارة ولي الأمر" : "Parent Form"}
           </Link>
         </div>
       </div>
