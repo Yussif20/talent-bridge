@@ -311,7 +311,7 @@ export default function ParentForm() {
                         const fileName = formData.disability;
                         if (!fileName) return;
                         const link = document.createElement("a");
-                        link.href = `/${locale}/${fileName}.docx`;
+                        link.href = `/${locale}/${fileName}.pdf`;
                         link.download = fileName;
                         link.click();
                       }}

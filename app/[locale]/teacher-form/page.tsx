@@ -774,7 +774,7 @@ export default function TeacherForm() {
               "borderline-intelligence": "Borderline-Intelligence",
               "hearing-impairment": "Hearing-Impairment",
               "learning-difficulties": "Learning-Disabilities",
-              "visual-impairment": "Visual-ImpartmentBraille",
+              "visual-impairment": "Visual-Impairment-Braille",
               "physical-disability": "Physical-Disability",
               "multiple-disabilities": "Multiple-Disabilities",
               "intellectual-disability": "Mild-Intellectual-Disability",
@@ -785,7 +785,7 @@ export default function TeacherForm() {
               : "";
             if (!fileName) return;
             const link = document.createElement("a");
-            link.href = `/${locale}/${fileName}.docx`;
+            link.href = `/${locale}/${fileName}.pdf`;
             link.download = fileName;
             link.click();
           }}

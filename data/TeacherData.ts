@@ -49,11 +49,6 @@ export const disabilityCategories = [
     en: "Unified and Giftedness Related Behaviors",
   },
   {
-    id: "Autism",
-    ar: "البند السلوكي المرتبط بالتوحد والموهبة",
-    en: "Autism and Giftedness Related Behaviors",
-  },
-  {
     id: "learning-difficulties",
     ar: "البند السلوكي المرتبط بصعوبات التعلم والموهبة",
     en: "Learning Difficulties and Giftedness Related Behaviors",
