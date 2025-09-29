@@ -37,6 +37,14 @@ type FormStep =
 
 export default function TeacherForm() {
   const locale = useLocale();
+  // Calculate max birthdate for age < 18 (today minus 18 years)
+  const today = new Date();
+  const maxBirthDateObj = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  );
+  const maxBirthDate = maxBirthDateObj.toISOString().slice(0, 10);
 
   // Form state management
   const [currentStep, setCurrentStep] = useState<FormStep>("basic");
@@ -746,6 +754,7 @@ export default function TeacherForm() {
             type="date"
             value={formData.basicInfo.birthDate}
             onChange={(e) => handleBasicInfoChange("birthDate", e.target.value)}
+            min={maxBirthDate}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
             required
           />
