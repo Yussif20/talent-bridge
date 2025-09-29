@@ -48,6 +48,7 @@
   },
   "ParentForm": {
     "title": "Parent Assessment Form",
+    "resultPositive": "Positive Results",
     "subtitle": "Help us understand your child's unique characteristics and behaviors",
     "instructions": {
       "title": "Instructions for Parents",

@@ -10,6 +10,7 @@ interface FormData {
   gender: string;
   parentName: string;
   birthDate: string;
+  disability: string;
   answers: number[];
 }
 
@@ -17,9 +18,19 @@ interface ApiResponse {
   result: number;
   evaluation: string;
   disability: string;
+  percentage?: number;
+  isTwiceExceptional?: boolean;
 }
 
 export default function ParentForm() {
+  // Calculate max birthdate for age < 18 (today minus 18 years)
+  const today = new Date();
+  const maxBirthDateObj = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  );
+  const maxBirthDate = maxBirthDateObj.toISOString().slice(0, 10);
   const locale = useLocale();
   const t = useTranslations("ParentForm");
   const [formData, setFormData] = useState<FormData>({
@@ -28,6 +39,7 @@ export default function ParentForm() {
     gender: "",
     parentName: "",
     birthDate: "",
+    disability: "",
     answers: new Array(15).fill(-1),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,11 +58,11 @@ export default function ParentForm() {
     },
     {
       en: "Shows contrast between excellence in some areas and clear difficulties in others.",
-      ar: "يظهر تباينًا بين تفوقه في بعض المجالات وصعوبات واضحة في مجالات أخرى.",
+      ar: "يجمع بين تفوق واضح في مجالات محددة وفرص واعدة للتطور.",
     },
     {
       en: "Shows feelings of frustration or low self-confidence due to this gap.",
-      ar: "يُبدي مشاعر إحباط أو انخفاض ثقة بالنفس بسبب هذه الفجوة.",
+      ar: "تظهر لديه لحظات من الإحباط مرتبطة بتفاوت الأداء لديه، لكنها فرصة لبناء ثقته وتعزيز تميزه.",
     },
     {
       en: "Interacts enthusiastically with creative or exploratory activities.",
@@ -58,11 +70,11 @@ export default function ParentForm() {
     },
     {
       en: "Has difficulty concentrating or organizing daily tasks.",
-      ar: "يواجه صعوبة في التركيز أو تنظيم المهام اليومية.",
+      ar: "تظهر لديه فرص لتحسين التركيز وتنمية مهارات تنظيم المهام اليومية.",
     },
     {
       en: "Suffers from difficulties in reading or writing compared to their level in conversation or comprehension.",
-      ar: "يعاني من صعوبات في القراءة أو الكتابة مقارنة بمستواه في المحادثة أو الفهم.",
+      ar: "يبدي تميزًا في المحادثة والفهم، مع فرص لتطوير مهارات القراءة والكتابة.",
     },
     {
       en: "Prefers individual work or isolation over group activities.",
@@ -74,7 +86,7 @@ export default function ParentForm() {
     },
     {
       en: "Shows unexpected or different responses in social situations.",
-      ar: "يُظهر استجابات غير متوقعة أو مختلفة في المواقف الاجتماعية.",
+      ar: "يبدي استجابات مختلفة في المواقف الاجتماعية تعكس شخصيته المتفردة.",
     },
     {
       en: "Has rich vocabulary or way of expression compared to their age.",
@@ -109,10 +121,17 @@ export default function ParentForm() {
   };
 
   const calculateResult = () => {
-    return formData.answers.reduce(
-      (sum, answer) => sum + (answer === -1 ? 0 : answer),
-      0
-    );
+    // New scoring: never=0, sometimes=5%, always=10%
+    const totalPoints = formData.answers.reduce((sum, answer) => {
+      if (answer === 0) return sum + 0; // Never = 0
+      if (answer === 1) return sum + 5; // Sometimes = 5%
+      if (answer === 2) return sum + 10; // Always = 10%
+      return sum;
+    }, 0);
+
+    // Calculate percentage out of maximum possible (15 questions × 10% = 150%)
+    const percentage = (totalPoints / 150) * 100;
+    return { totalPoints, percentage };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,33 +159,33 @@ export default function ParentForm() {
     }
 
     try {
-      const totalScore = calculateResult();
+      const { totalPoints, percentage } = calculateResult();
+      const isTwiceExceptional = percentage >= 60;
 
-      // Determine evaluation and disability based on score
-      let evaluation = "";
-      let disability = "";
-
-      if (totalScore <= 10) {
-        evaluation = "Low risk for twice-exceptional characteristics";
-        disability = "None indicated";
-      } else if (totalScore <= 20) {
-        evaluation = "Moderate indicators of twice-exceptional characteristics";
-        disability = "Further assessment recommended";
-      } else {
-        evaluation = "Strong indicators of twice-exceptional characteristics";
-        disability = "Professional evaluation recommended";
-      }
-
+      // Prepare API request body according to new structure
+      // Format today's date as YYYY-MM-DD
+      const today = new Date();
+      const yyyyMmDd = today.toISOString().slice(0, 10);
       const requestBody = {
-        result: totalScore,
-        evaluation: evaluation,
-        disability: disability,
+        name: formData.childName,
+        educationGrade: formData.grade,
+        gender: formData.gender,
+        parentName: formData.parentName,
+        birthDate: formData.birthDate,
+        checkerName: null, // Not available in parent form
+        checkupDate: yyyyMmDd,
+        schoolName: null, // Not available in parent form
+        isTalented: isTwiceExceptional,
+        talentPercent: Number(percentage.toFixed(2)),
+        isDisabled: true, // Always true in parent form
+        disability: formData.disability,
+        disabilityPercent: 100, // Always 100% in parent form
         surveyType: "Parents",
       };
 
       console.log("Submitting to API:", requestBody);
 
-      const response = await fetch("/api/survey/SurveyResult/Save", {
+      const response = await fetch("/api/survey/surveyresult/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -185,11 +204,15 @@ export default function ParentForm() {
       const apiResult = await response.json();
       console.log("API Success:", apiResult);
 
-      // Successfully submitted to API
+      // Set result for display
       setResult({
-        result: totalScore,
-        evaluation: evaluation,
-        disability: disability,
+        result: totalPoints,
+        evaluation: isTwiceExceptional
+          ? "Twice-Exceptional Student"
+          : "Not Twice-Exceptional",
+        disability: "",
+        percentage: percentage,
+        isTwiceExceptional: isTwiceExceptional,
       });
     } catch (error) {
       console.error("Detailed error:", error);
@@ -222,65 +245,116 @@ export default function ParentForm() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
-                <svg
-                  className="w-10 h-10 text-green-600 dark:text-green-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+              <div
+                className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 ${
+                  result.isTwiceExceptional
+                    ? "bg-green-100 dark:bg-green-900/30"
+                    : "bg-orange-100 dark:bg-orange-900/30"
+                }`}
+              >
+                {result.isTwiceExceptional ? (
+                  <svg
+                    className="w-10 h-10 text-green-600 dark:text-green-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-10 h-10 text-orange-600 dark:text-orange-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                )}
               </div>
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                {t("results.title")}
+                {result.isTwiceExceptional
+                  ? locale === "ar"
+                    ? "نتائج إيجابية"
+                    : "Positive Results"
+                  : locale === "ar"
+                  ? "نتائج التقييم"
+                  : "Assessment Results"}
               </h1>
-              <p className="text-xl text-green-600 dark:text-green-400 mb-8">
-                {t("results.success")}
-              </p>
             </div>
 
             <div className="space-y-6 mb-8">
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {locale === "ar" ? "النتيجة الإجمالية" : "Total Score"}
+                  {locale === "ar" ? "النسبة المئوية" : "Percentage Score"}
                 </h3>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {result.result}/30
+                  {result.percentage?.toFixed(1)}%
                 </p>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {locale === "ar" ? "التقييم" : "Evaluation"}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  {result.evaluation}
-                </p>
-              </div>
-
-              <div className="bg-orange-50 dark:bg-orange-900/20 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {locale === "ar" ? "التوصية" : "Recommendation"}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  {result.disability}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 mb-8">
-              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">
-                {locale === "ar" ? "ملاحظة مهمة" : "Important Note"}
-              </h3>
-              <p className="text-blue-800 dark:text-blue-200 text-sm">
-                {t("disclaimer")}
-              </p>
+              {result.isTwiceExceptional ? (
+                <>
+                  <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold text-green-900 dark:text-green-300 mb-3">
+                      {locale === "ar" ? "تهانينا!" : "Congratulations!"}
+                    </h3>
+                    <p className="text-green-800 dark:text-green-200 mb-4">
+                      {locale === "ar"
+                        ? "تشير النتائج إلى أن طفلكم لديه مؤشرات قوية على كونه طالباً ثنائي الاستثناء (موهوب مع تحديات تعلمية). هذا يعني أنه يمتلك قدرات عالية في مجالات معينة مع وجود بعض التحديات في مجالات أخرى."
+                        : "The results indicate that your child shows strong indicators of being a Twice-Exceptional student (gifted with learning challenges). This means they possess high abilities in certain areas while having some challenges in others."}
+                    </p>
+                    <button
+                      onClick={() => {
+                        const fileName = "parent-guide.pdf";
+                        const link = document.createElement("a");
+                        link.href = `/${locale}/${fileName}`;
+                        link.download = fileName;
+                        link.click();
+                      }}
+                      className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors inline-flex items-center gap-2"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      {locale === "ar"
+                        ? "تحميل دليل الوالدين"
+                        : "Download Parent Guide"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-2xl p-6">
+                  <h3 className="text-lg font-semibold text-orange-900 dark:text-orange-300 mb-3">
+                    {locale === "ar" ? "نتائج التقييم" : "Assessment Results"}
+                  </h3>
+                  <p className="text-orange-800 dark:text-orange-200">
+                    {locale === "ar"
+                      ? "تشير نتائج المقياس إلى وجود مؤشرات مرتبطة بالإعاقة فقط، ولم تظهر مؤشرات كافية للموهبة في الوقت الحالي. هذا لا يتنافى مع إمكانية وجود قدرات مميزة مستقبلاً، ونوصي بمتابعة التقدم مع الفريق المختص في مدرستكم."
+                      : "The scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school."}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -366,6 +440,48 @@ export default function ParentForm() {
                   required
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {locale === "ar" ? "نوع الإعاقة" : "Disability Type"} *
+                </label>
+                <select
+                  value={formData.disability}
+                  onChange={(e) =>
+                    handleInputChange("disability", e.target.value)
+                  }
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
+                  required
+                >
+                  <option value="" disabled>
+                    {locale === "ar" ? "اختر نوع الإعاقة" : "Select Disability"}
+                  </option>
+                  <option value="ADHD">ADHD</option>
+                  <option value="Visual">
+                    {locale === "ar" ? "بصرية" : "Visual"}
+                  </option>
+                  <option value="Physical">
+                    {locale === "ar" ? "جسدية" : "Physical"}
+                  </option>
+                  <option value="Mental">
+                    {locale === "ar" ? "ذهنية" : "Mental"}
+                  </option>
+                  <option value="Hearing">
+                    {locale === "ar" ? "سمعية" : "Hearing"}
+                  </option>
+                  <option value="Sharp Intelligent">
+                    {locale === "ar" ? "ذكاء حاد" : "Sharp Intelligent"}
+                  </option>
+                  <option value="Learning Diffculties">
+                    {locale === "ar" ? "صعوبات تعلم" : "Learning Difficulties"}
+                  </option>
+                  <option value="Multiple">
+                    {locale === "ar" ? "متعددة" : "Multiple"}
+                  </option>
+                  <option value="Autism">
+                    {locale === "ar" ? "توحد" : "Autism"}
+                  </option>
+                </select>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -444,6 +560,7 @@ export default function ParentForm() {
                 type="date"
                 value={formData.birthDate}
                 onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                min={maxBirthDate}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
                 required
               />
@@ -530,7 +647,7 @@ export default function ParentForm() {
         </form>
 
         {/* Navigation */}
-        <div className="flex justify-center space-x-4 mt-8">
+        {/* <div className="flex justify-center space-x-4 mt-8">
           <Link
             href={`/${locale}`}
             className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
@@ -543,7 +660,7 @@ export default function ParentForm() {
           >
             {locale === "ar" ? "استمارة المعلم" : "Teacher Form"}
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
