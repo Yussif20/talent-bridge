@@ -49,64 +49,64 @@ export default function ParentForm() {
   // Parent assessment questions
   const questions = [
     {
-      en: "My child shows distinctive abilities or interests in specific areas (such as mathematics, art, technology...).",
-      ar: "يُظهر ابني/ابنتي قدرات أو اهتمامات مميزة في مجالات معينة (مثل الرياضيات، الفن، التكنولوجيا…).",
+      en: t("form.questions.q1"),
+      ar: t("form.questions.q1"),
     },
     {
-      en: "Asks deep or unusual questions that show advanced thinking.",
-      ar: "يطرح أسئلة عميقة أو غير مألوفة تدل على تفكير متقدم.",
+      en: t("form.questions.q2"),
+      ar: t("form.questions.q2"),
     },
     {
-      en: "Shows contrast between excellence in some areas and clear difficulties in others.",
-      ar: "يجمع بين تفوق واضح في مجالات محددة وفرص واعدة للتطور.",
+      en: t("form.questions.q3"),
+      ar: t("form.questions.q3"),
     },
     {
-      en: "Shows feelings of frustration or low self-confidence due to this gap.",
-      ar: "تظهر لديه لحظات من الإحباط مرتبطة بتفاوت الأداء لديه، لكنها فرصة لبناء ثقته وتعزيز تميزه.",
+      en: t("form.questions.q4"),
+      ar: t("form.questions.q4"),
     },
     {
-      en: "Interacts enthusiastically with creative or exploratory activities.",
-      ar: "يتفاعل بحماس مع الأنشطة الإبداعية أو الاستكشافية.",
+      en: t("form.questions.q5"),
+      ar: t("form.questions.q5"),
     },
     {
-      en: "Has difficulty concentrating or organizing daily tasks.",
-      ar: "تظهر لديه فرص لتحسين التركيز وتنمية مهارات تنظيم المهام اليومية.",
+      en: t("form.questions.q6"),
+      ar: t("form.questions.q6"),
     },
     {
-      en: "Suffers from difficulties in reading or writing compared to their level in conversation or comprehension.",
-      ar: "يبدي تميزًا في المحادثة والفهم، مع فرص لتطوير مهارات القراءة والكتابة.",
+      en: t("form.questions.q7"),
+      ar: t("form.questions.q7"),
     },
     {
-      en: "Prefers individual work or isolation over group activities.",
-      ar: "يفضّل العمل الفردي أو العزلة على الأنشطة الجماعية.",
+      en: t("form.questions.q8"),
+      ar: t("form.questions.q8"),
     },
     {
-      en: "Shows distraction or hyperactivity, but focuses deeply when doing what they love.",
-      ar: "يظهر تشتتًا أو فرط حركة، لكنه يركز بعمق عند ممارسة ما يحبه.",
+      en: t("form.questions.q9"),
+      ar: t("form.questions.q9"),
     },
     {
-      en: "Shows unexpected or different responses in social situations.",
-      ar: "يبدي استجابات مختلفة في المواقف الاجتماعية تعكس شخصيته المتفردة.",
+      en: t("form.questions.q10"),
+      ar: t("form.questions.q10"),
     },
     {
-      en: "Has rich vocabulary or way of expression compared to their age.",
-      ar: "لديه مفردات أو طريقة تعبير غنية مقارنة بعمره.",
+      en: t("form.questions.q11"),
+      ar: t("form.questions.q11"),
     },
     {
-      en: "Shows speed in learning new concepts or solving practical problems.",
-      ar: "يظهر سرعة في تعلم مفاهيم جديدة أو في حل المشكلات العملية.",
+      en: t("form.questions.q12"),
+      ar: t("form.questions.q12"),
     },
     {
-      en: "Uses unconventional methods to express themselves (drawing, writing, creating solutions).",
-      ar: "يستخدم أساليب غير تقليدية للتعبير عن نفسه (رسم، كتابة، ابتكار حلول).",
+      en: t("form.questions.q13"),
+      ar: t("form.questions.q13"),
     },
     {
-      en: "Shows creativity or many diverse ideas in a short time.",
-      ar: "يبدي إبداعًا أو أفكارًا كثيرة ومتنوعة خلال وقت قصير.",
+      en: t("form.questions.q14"),
+      ar: t("form.questions.q14"),
     },
     {
-      en: "Shows artistic sense or special inclinations in specific areas (music, design, scientific experiments...).",
-      ar: "يظهر حسًا فنيًا أو ميولًا خاصة في مجالات محددة (الموسيقى، التصميم، التجارب العلمية…).",
+      en: t("form.questions.q15"),
+      ar: t("form.questions.q15"),
     },
   ];
 
@@ -153,7 +153,7 @@ export default function ParentForm() {
     }
 
     if (formData.answers.some((answer) => answer === -1)) {
-      setError("Please answer all questions");
+      setError(t("form.allQuestionsRequired"));
       setIsSubmitting(false);
       return;
     }
@@ -208,8 +208,8 @@ export default function ParentForm() {
       setResult({
         result: totalPoints,
         evaluation: isTwiceExceptional
-          ? "Twice-Exceptional Student"
-          : "Not Twice-Exceptional",
+          ? t("results.twiceExceptional")
+          : t("results.notTwiceExceptional"),
         disability: "",
         percentage: percentage,
         isTwiceExceptional: isTwiceExceptional,
@@ -226,13 +226,11 @@ export default function ParentForm() {
       console.error("Error message:", errorMessage);
 
       if (error instanceof TypeError && errorMessage.includes("fetch")) {
-        setError(
-          "Network error: Please check your internet connection. This might be a CORS issue - try running the app on a server."
-        );
+        setError(t("results.networkError"));
       } else if (errorMessage.includes("HTTP")) {
-        setError(`Server error: ${errorMessage}`);
+        setError(t("results.serverError", { message: errorMessage }));
       } else {
-        setError(t("results.error") + ` (${errorMessage})`);
+        setError(t("results.error", { message: errorMessage }));
       }
     } finally {
       setIsSubmitting(false);
@@ -284,19 +282,15 @@ export default function ParentForm() {
               </div>
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 {result.isTwiceExceptional
-                  ? locale === "ar"
-                    ? "نتائج إيجابية"
-                    : "Positive Results"
-                  : locale === "ar"
-                  ? "نتائج التقييم"
-                  : "Assessment Results"}
+                  ? t("resultPositive")
+                  : t("results.title")}
               </h1>
             </div>
 
             <div className="space-y-6 mb-8">
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {locale === "ar" ? "النسبة المئوية" : "Percentage Score"}
+                  {t("results.percentageScore")}
                 </h3>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                   {result.percentage?.toFixed(1)}%
@@ -307,12 +301,10 @@ export default function ParentForm() {
                 <>
                   <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-6">
                     <h3 className="text-lg font-semibold text-green-900 dark:text-green-300 mb-3">
-                      {locale === "ar" ? "تهانينا!" : "Congratulations!"}
+                      {t("results.congratulations")}
                     </h3>
                     <p className="text-green-800 dark:text-green-200 mb-4">
-                      {locale === "ar"
-                        ? "تشير النتائج إلى أن طفلكم لديه مؤشرات قوية على كونه طالباً ثنائي الاستثناء (موهوب مع تحديات تعلمية). هذا يعني أنه يمتلك قدرات عالية في مجالات معينة مع وجود بعض التحديات في مجالات أخرى."
-                        : "The results indicate that your child shows strong indicators of being a Twice-Exceptional student (gifted with learning challenges). This means they possess high abilities in certain areas while having some challenges in others."}
+                      {t("results.twiceExceptionalMessage")}
                     </p>
                     <button
                       onClick={() => {
@@ -337,21 +329,17 @@ export default function ParentForm() {
                           d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
-                      {locale === "ar"
-                        ? "تحميل دليل الوالدين"
-                        : "Download Parent Guide"}
+                      {t("results.downloadGuide")}
                     </button>
                   </div>
                 </>
               ) : (
                 <div className="bg-orange-50 dark:bg-orange-900/20 rounded-2xl p-6">
                   <h3 className="text-lg font-semibold text-orange-900 dark:text-orange-300 mb-3">
-                    {locale === "ar" ? "نتائج التقييم" : "Assessment Results"}
+                    {t("results.title")}
                   </h3>
                   <p className="text-orange-800 dark:text-orange-200">
-                    {locale === "ar"
-                      ? "تشير نتائج المقياس إلى وجود مؤشرات مرتبطة بالإعاقة فقط، ولم تظهر مؤشرات كافية للموهبة في الوقت الحالي. هذا لا يتنافى مع إمكانية وجود قدرات مميزة مستقبلاً، ونوصي بمتابعة التقدم مع الفريق المختص في مدرستكم."
-                      : "The scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school."}
+                    {t("results.notTwiceExceptionalMessage")}
                   </p>
                 </div>
               )}
@@ -362,13 +350,13 @@ export default function ParentForm() {
                 href={`/${locale}`}
                 className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors text-center"
               >
-                {locale === "ar" ? "العودة للرئيسية" : "Back to Home"}
+                {t("results.backToHome")}
               </Link>
               <Link
                 href={`/${locale}/teacher-form`}
                 className="px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-center"
               >
-                {locale === "ar" ? "استمارة المعلم" : "Teacher Form"}
+                {t("results.teacherForm")}
               </Link>
             </div>
           </div>
@@ -388,7 +376,7 @@ export default function ParentForm() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100/80 dark:bg-blue-900/40 backdrop-blur-sm text-blue-800 dark:text-blue-200 text-sm font-medium mb-6">
             <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-            {locale === "ar" ? "تقييم ولي الأمر" : "Parent Assessment"}
+            {t("title")}
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
@@ -422,13 +410,13 @@ export default function ParentForm() {
           {/* Basic Information */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              {locale === "ar" ? "المعلومات الأساسية" : "Basic Information"}
+              {t("form.basicInfoTitle")}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {locale === "ar" ? "اسم الطالب" : "Student Name"} *
+                  {t("form.childName")} *
                 </label>
                 <input
                   type="text"
@@ -442,7 +430,7 @@ export default function ParentForm() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {locale === "ar" ? "نوع الإعاقة" : "Disability Type"} *
+                  {t("form.disability")} *
                 </label>
                 <select
                   value={formData.disability}
@@ -453,39 +441,39 @@ export default function ParentForm() {
                   required
                 >
                   <option value="" disabled>
-                    {locale === "ar" ? "اختر نوع الإعاقة" : "Select Disability"}
+                    {t("form.disabilitySelect")}
                   </option>
                   <option value="ADHD">ADHD</option>
                   <option value="Visual">
-                    {locale === "ar" ? "بصرية" : "Visual"}
+                    {t("form.disabilityOptions.visual")}
                   </option>
                   <option value="Physical">
-                    {locale === "ar" ? "جسدية" : "Physical"}
+                    {t("form.disabilityOptions.physical")}
                   </option>
                   <option value="Mental">
-                    {locale === "ar" ? "ذهنية" : "Mental"}
+                    {t("form.disabilityOptions.mental")}
                   </option>
                   <option value="Hearing">
-                    {locale === "ar" ? "سمعية" : "Hearing"}
+                    {t("form.disabilityOptions.hearing")}
                   </option>
                   <option value="Sharp Intelligent">
-                    {locale === "ar" ? "ذكاء حاد" : "Sharp Intelligent"}
+                    {t("form.disabilityOptions.sharpIntelligent")}
                   </option>
-                  <option value="Learning Diffculties">
-                    {locale === "ar" ? "صعوبات تعلم" : "Learning Difficulties"}
+                  <option value="Learning Difficulties">
+                    {t("form.disabilityOptions.learningDifficulties")}
                   </option>
                   <option value="Multiple">
-                    {locale === "ar" ? "متعددة" : "Multiple"}
+                    {t("form.disabilityOptions.multiple")}
                   </option>
                   <option value="Autism">
-                    {locale === "ar" ? "توحد" : "Autism"}
+                    {t("form.disabilityOptions.autism")}
                   </option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {locale === "ar" ? "الصف الدراسي" : "Grade Level"} *
+                  {t("form.grade")} *
                 </label>
                 <input
                   type="text"
@@ -500,7 +488,7 @@ export default function ParentForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {locale === "ar" ? "الجنس" : "Gender"} *
+                  {t("form.gender")} *
                 </label>
                 <div className="flex gap-4">
                   <label className="flex items-center cursor-pointer">
@@ -515,7 +503,7 @@ export default function ParentForm() {
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                     />
                     <span className="ml-2 text-gray-700 dark:text-gray-300">
-                      {locale === "ar" ? "ذكر" : "Male"}
+                      {t("form.genderOptions.male")}
                     </span>
                   </label>
                   <label className="flex items-center cursor-pointer">
@@ -530,7 +518,7 @@ export default function ParentForm() {
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                     />
                     <span className="ml-2 text-gray-700 dark:text-gray-300">
-                      {locale === "ar" ? "أنثى" : "Female"}
+                      {t("form.genderOptions.female")}
                     </span>
                   </label>
                 </div>
@@ -538,7 +526,7 @@ export default function ParentForm() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {locale === "ar" ? "اسم ولي الأمر" : "Parent Name"} *
+                  {t("form.parentName")} *
                 </label>
                 <input
                   type="text"
@@ -554,7 +542,7 @@ export default function ParentForm() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {locale === "ar" ? "تاريخ الميلاد" : "Birth Date"} *
+                {t("form.birthDate")} *
               </label>
               <input
                 type="date"
@@ -608,12 +596,15 @@ export default function ParentForm() {
                               className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                             />
                             <span className="text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                              {value === 0 &&
-                                (locale === "ar" ? "لا ينطبق" : "Never")}
-                              {value === 1 &&
-                                (locale === "ar" ? "أحياناً" : "Sometimes")}
-                              {value === 2 &&
-                                (locale === "ar" ? "دائماً" : "Always")}
+                              {t(
+                                `form.options.${
+                                  value === 0
+                                    ? "never"
+                                    : value === 1
+                                    ? "sometimes"
+                                    : "always"
+                                }`
+                              )}
                             </span>
                           </label>
                         ))}
@@ -645,22 +636,6 @@ export default function ParentForm() {
             </button>
           </div>
         </form>
-
-        {/* Navigation */}
-        {/* <div className="flex justify-center space-x-4 mt-8">
-          <Link
-            href={`/${locale}`}
-            className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-          >
-            {locale === "ar" ? "العودة للرئيسية" : "Back to Home"}
-          </Link>
-          <Link
-            href={`/${locale}/teacher-form`}
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
-          >
-            {locale === "ar" ? "استمارة المعلم" : "Teacher Form"}
-          </Link>
-        </div> */}
       </div>
     </div>
   );
