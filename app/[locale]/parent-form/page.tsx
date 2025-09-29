@@ -308,9 +308,10 @@ export default function ParentForm() {
                     </p>
                     <button
                       onClick={() => {
-                        const fileName = "parent-guide.pdf";
+                        const fileName = formData.disability;
+                        if (!fileName) return;
                         const link = document.createElement("a");
-                        link.href = `/${locale}/${fileName}`;
+                        link.href = `/${locale}/${fileName}.docx`;
                         link.download = fileName;
                         link.click();
                       }}
@@ -443,30 +444,32 @@ export default function ParentForm() {
                   <option value="" disabled>
                     {t("form.disabilitySelect")}
                   </option>
-                  <option value="ADHD">ADHD</option>
-                  <option value="Visual">
-                    {t("form.disabilityOptions.visual")}
+                  <option value="ADHD">
+                    {t("form.disabilityOptions.ADHD")}
                   </option>
-                  <option value="Physical">
-                    {t("form.disabilityOptions.physical")}
+                  <option value="Borderline-Intelligence">
+                    {t("form.disabilityOptions.Borderline_Intelligence")}
                   </option>
-                  <option value="Mental">
-                    {t("form.disabilityOptions.mental")}
+                  <option value="Hearing-Impairment">
+                    {t("form.disabilityOptions.Hearing_Impairment")}
                   </option>
-                  <option value="Hearing">
-                    {t("form.disabilityOptions.hearing")}
+                  <option value="Learning-Disabilities">
+                    {t("form.disabilityOptions.Learning_Disabilities")}
                   </option>
-                  <option value="Sharp Intelligent">
-                    {t("form.disabilityOptions.sharpIntelligent")}
+                  <option value="Visual-ImpairmentBraille">
+                    {t("form.disabilityOptions.Visual_Impairment_Braille")}
                   </option>
-                  <option value="Learning Difficulties">
-                    {t("form.disabilityOptions.learningDifficulties")}
+                  <option value="Physical-Disability">
+                    {t("form.disabilityOptions.Physical_Disability")}
                   </option>
-                  <option value="Multiple">
-                    {t("form.disabilityOptions.multiple")}
+                  <option value="Multiple-Disabilities">
+                    {t("form.disabilityOptions.Multiple_Disabilities")}
                   </option>
-                  <option value="Autism">
-                    {t("form.disabilityOptions.autism")}
+                  <option value="Mild-Intellectual-Disability">
+                    {t("form.disabilityOptions.Mild_Intellectual_Disability")}
+                  </option>
+                  <option value="Unified">
+                    {t("form.disabilityOptions.Unified")}
                   </option>
                 </select>
               </div>

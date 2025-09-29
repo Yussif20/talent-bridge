@@ -52,14 +52,15 @@
       "disability": "نوع الإعاقة",
       "disabilitySelect": "اختر نوع الإعاقة",
       "disabilityOptions": {
-        "visual": "بصرية",
-        "physical": "جسدية",
-        "mental": "ذهنية",
-        "hearing": "سمعية",
-        "sharpIntelligent": "ذكاء حاد",
-        "learningDifficulties": "صعوبات تعلم",
-        "multiple": "متعددة",
-        "autism": "توحد"
+        "ADHD": "اضطراب نقص الانتباه وفرط الحركة",
+        "Borderline_Intelligence": "الذكاء الحدي",
+        "Hearing_Impairment": "الإعاقة السمعية",
+        "Learning_Disabilities": "صعوبات التعلم",
+        "Visual_Impairment_Braille": "الإعاقة البصرية (برايل)",
+        "Physical_Disability": "الإعاقة الجسدية",
+        "Multiple_Disabilities": "إعاقات متعددة",
+        "Mild_Intellectual_Disability": "الإعاقة الذهنية الخفيفة",
+        "Unified": "موحد"
       },
       "grade": "الصف الدراسي",
       "gender": "الجنس",

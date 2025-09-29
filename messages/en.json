@@ -53,15 +53,17 @@
       "disability": "Disability Type",
       "disabilitySelect": "Select Disability",
       "disabilityOptions": {
-        "visual": "Visual",
-        "physical": "Physical",
-        "mental": "Mental",
-        "hearing": "Hearing",
-        "sharpIntelligent": "Sharp Intelligent",
-        "learningDifficulties": "Learning Difficulties",
-        "multiple": "Multiple",
-        "autism": "Autism"
+        "ADHD": "ADHD",
+        "Borderline_Intelligence": "Borderline Intelligence",
+        "Hearing_Impairment": "Hearing Impairment",
+        "Learning_Disabilities": "Learning Disabilities",
+        "Visual_Impairment_Braille": "Visual Impairment (Braille)",
+        "Physical_Disability": "Physical Disability",
+        "Multiple_Disabilities": "Multiple Disabilities",
+        "Mild_Intellectual_Disability": "Mild Intellectual Disability",
+        "Unified": "Unified"
       },
+      "downloadPlan": "Download Plan",
       "grade": "Grade Level",
       "gender": "Gender",
       "genderOptions": {
