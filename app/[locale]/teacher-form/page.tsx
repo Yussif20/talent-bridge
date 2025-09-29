@@ -286,6 +286,23 @@ export default function TeacherForm() {
       const talentPercent = Number(generalScore.toFixed(2));
       const isTalented = talentPercent >= 60;
 
+      // Map selectedDisability to required values
+      const disabilityMap: Record<string, string> = {
+        adhd: "ADHD",
+        "borderline-intelligence": "Borderline-Intelligence",
+        "hearing-impairment": "Hearing-Impairment",
+        "learning-difficulties": "Learning-Disabilities",
+        "visual-impairment": "Visual-ImpairmentBraille",
+        "physical-disability": "Physical-Disability",
+        "multiple-disabilities": "Multiple-Disabilities",
+        "intellectual-disability": "Mild-Intellectual-Disability",
+        unified: "Unified",
+      };
+      const mappedDisability = formData.selectedDisability
+        ? disabilityMap[formData.selectedDisability] ||
+          formData.selectedDisability
+        : "";
+
       const requestBody = {
         name: formData.basicInfo.studentName,
         educationGrade: formData.basicInfo.grade,
@@ -298,7 +315,7 @@ export default function TeacherForm() {
         isTalented: isTalented,
         talentPercent: talentPercent,
         isDisabled: true,
-        disability: formData.selectedDisability || "",
+        disability: mappedDisability,
         disabilityPercent: Number(disabilityPercent.toFixed(1)),
         surveyType: "Teachers",
       };
@@ -744,7 +761,20 @@ export default function TeacherForm() {
       {result?.planFile && (
         <button
           onClick={() => {
-            const fileName = result.planFile;
+            const disabilityMap: Record<string, string> = {
+              adhd: "ADHD",
+              "borderline-intelligence": "Borderline-Intelligence",
+              "hearing-impairment": "Hearing-Impairment",
+              "learning-difficulties": "Learning-Disabilities",
+              "visual-impairment": "Visual-ImpartmentBraille",
+              "physical-disability": "Physical-Disability",
+              "multiple-disabilities": "Multiple-Disabilities",
+              "intellectual-disability": "Mild-Intellectual-Disability",
+              unified: "Unified",
+            };
+            const fileName = result.planFile
+              ? disabilityMap[result.planFile] || result.planFile
+              : "";
             if (!fileName) return;
             const link = document.createElement("a");
             link.href = `/${locale}/${fileName}.docx`;

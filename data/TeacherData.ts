@@ -88,7 +88,7 @@ export const disabilityCategories = [
 // Disability-specific questions - All 8 categories with 10 questions each
 export const getDisabilityQuestions = (disabilityId: string) => {
   const questions = {
-    autism: [
+    unified: [
       {
         ar: "يُظهر قدرات عالية في الحفظ أو التذكر التفصيلي لمعلومات محددة",
         en: "Shows high abilities in memorization or detailed recall of specific information",
