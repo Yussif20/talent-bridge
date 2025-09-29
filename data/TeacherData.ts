@@ -44,6 +44,11 @@ export const generalQuestions = [
 // Disability categories
 export const disabilityCategories = [
   {
+    id: "unified",
+    ar: "البند السلوكي المرتبط بالتوحد والموهبة الشاملة",
+    en: "Unified and Giftedness Related Behaviors",
+  },
+  {
     id: "Autism",
     ar: "البند السلوكي المرتبط بالتوحد والموهبة",
     en: "Autism and Giftedness Related Behaviors",
