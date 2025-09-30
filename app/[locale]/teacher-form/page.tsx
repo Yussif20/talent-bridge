@@ -79,6 +79,7 @@ export default function TeacherForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saveSucceeded, setSaveSucceeded] = useState<boolean | null>(null);
 
   const handleBasicInfoChange = (field: keyof BasicInfo, value: string) => {
     setFormData((prev) => ({
@@ -167,43 +168,42 @@ export default function TeacherForm() {
             disabilityPercent: 0,
             surveyType: "Teachers",
           };
-          fetch("/api/survey/surveyresult/save", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                console.log(
-                  "Submitting survey with name:",
-                  formData.basicInfo.studentName
-                );
-                return response.text().then((errorText) => {
-                  throw new Error(`HTTP ${response.status}: ${errorText}`);
-                });
-              }
-              return response.json();
-            })
-            .then(() => {
-              setResult({
-                result: percentage,
-                evaluation:
-                  locale === "ar"
-                    ? `النسبة المئوية للموهبة: ${percentage}%\nمقياس النتائج يشير إلى وجود مؤشرات تتعلق بالإعاقة فقط، وعدم كفاية مؤشرات الموهبة في الوقت الحالي. هذا لا يتعارض مع إمكانية وجود قدرات مميزة في المستقبل، ونوصي بمتابعة التقدم مع الفريق المتخصص في مدرستك.`
-                    : `Talent percentage: ${percentage}%\nThe scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school.`,
-                disability: "",
-                talentPercent: percentage,
-                disabilityPercent: 0,
-                planFile: undefined,
+          // Show results immediately
+          setResult({
+            result: percentage,
+            evaluation:
+              locale === "ar"
+                ? `النسبة المئوية للموهبة: ${percentage}%\nمقياس النتائج يشير إلى وجود مؤشرات تتعلق بالإعاقة فقط، وعدم كفاية مؤشرات الموهبة في الوقت الحالي. هذا لا يتعارض مع إمكانية وجود قدرات مميزة في المستقبل، ونوصي بمتابعة التقدم مع الفريق المتخصص في مدرستك.`
+                : `Talent percentage: ${percentage}%\nThe scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school.`,
+            disability: "",
+            talentPercent: percentage,
+            disabilityPercent: 0,
+            planFile: undefined,
+          });
+          setSaveSucceeded(null);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setCurrentStep("results");
+
+          // Save in background
+          (async () => {
+            try {
+              const response = await fetch("/api/survey/surveyresult/save", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
               });
-              window.scrollTo({ top: 0, behavior: "smooth" });
-              setCurrentStep("results");
-            })
-            .catch((error) => {
-              setError(error.message);
-            });
+              if (!response.ok) {
+                setSaveSucceeded(false);
+                return;
+              }
+              await response.json();
+              setSaveSucceeded(true);
+            } catch {
+              setSaveSucceeded(false);
+            }
+          })();
         } else {
           window.scrollTo({ top: 0, behavior: "smooth" });
           setCurrentStep("disability-select");
@@ -327,19 +327,7 @@ export default function TeacherForm() {
         surveyType: "Teachers",
       };
 
-      const response = await fetch("/api/survey/surveyresult/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
-
+      // Show results immediately
       setResult({
         result: totalScore,
         evaluation: isTalented
@@ -350,8 +338,30 @@ export default function TeacherForm() {
         disabilityPercent: Number(disabilityPercent.toFixed(1)),
         planFile: formData.selectedDisability,
       });
+      setSaveSucceeded(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
       setCurrentStep("results");
+
+      // Save in background
+      (async () => {
+        try {
+          const response = await fetch("/api/survey/surveyresult/save", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          });
+          if (!response.ok) {
+            setSaveSucceeded(false);
+            return;
+          }
+          await response.json();
+          setSaveSucceeded(true);
+        } catch {
+          setSaveSucceeded(false);
+        }
+      })();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -742,6 +752,66 @@ export default function TeacherForm() {
           ? "تم إرسال التقييم بنجاح"
           : "Assessment Completed Successfully"}
       </h1>
+
+      {/* Save status indicator */}
+      <div className="rounded-2xl p-4 border inline-flex items-center gap-3 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
+        {saveSucceeded === true ? (
+          <svg
+            className="w-6 h-6 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        ) : saveSucceeded === false ? (
+          <svg
+            className="w-6 h-6 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        ) : (
+          <svg
+            className="w-6 h-6 text-gray-500 animate-pulse"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4l3 3"
+            />
+          </svg>
+        )}
+        <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+          {saveSucceeded === true
+            ? locale === "ar"
+              ? "تم حفظ التقييم بنجاح"
+              : "Assessment was saved successfully"
+            : saveSucceeded === false
+            ? locale === "ar"
+              ? "لم يتم حفظ التقييم"
+              : "Assessment was not saved"
+            : locale === "ar"
+            ? "جاري معالجة تقييمك..."
+            : "Processing your assessment..."}
+        </span>
+      </div>
 
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 mb-4">
         <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">
