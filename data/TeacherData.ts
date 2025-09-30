@@ -103,8 +103,8 @@ export const getDisabilityQuestions = (disabilityId: string) => {
         en: "Tends to deeply engage in specific topics without interest in other subjects",
       },
       {
-        ar: "يفضل الأنشطة الفردية على الجماعية، ويواجه صعوبة في التفاعل الاجتماعي",
-        en: "Prefers individual over group activities, has difficulty with social interaction",
+        ar: "يُفضّل الأنشطة الفردية التي تتيح له إبراز تميزه وإبداعه الخاص",
+        en: "Prefers individual activities that allow them to showcase their uniqueness and creativity",
       },
       {
         ar: "يفكر بطريقة غير تقليدية، ويقترح حلولًا مبتكرة لمشكلات معقدة",
@@ -115,20 +115,20 @@ export const getDisabilityQuestions = (disabilityId: string) => {
         en: "Shows intense interest in fine details or repetitive patterns",
       },
       {
-        ar: "يعاني من صعوبة في تفسير الإشارات الاجتماعية أو التعبير عن مشاعره",
-        en: "Has difficulty interpreting social cues or expressing emotions",
+        ar: "يعبر عن مشاعره وأفكاره بطرق مميزة تكشف عن منظور مختلف",
+        en: "Expresses emotions and thoughts in distinctive ways that reveal a different perspective",
       },
       {
-        ar: "يتضايق من التغييرات المفاجئة أو الخروج عن الروتين",
-        en: "Gets upset by sudden changes or deviations from routine",
+        ar: "يُفضل الروتين كوسيلة لزيادة الإنتاجية والاستقرار",
+        en: "Prefers routine as a means to enhance productivity and stability",
       },
       {
         ar: "يميل إلى التواصل غير اللفظي (مثل الرسم أو الكتابة) أكثر من الكلام المباشر",
         en: "Tends toward non-verbal communication (like drawing or writing) more than direct speech",
       },
       {
-        ar: "يتفاعل بشكل غير متوقع في المواقف الاجتماعية، رغم نضجه العقلي",
-        en: "Reacts unexpectedly in social situations despite mental maturity",
+        ar: "يتفاعل بطريقة غير مألوفة في المواقف الاجتماعية تدل على نضج عقلي متقدم",
+        en: "Interacts in unusual ways in social situations that indicate advanced mental maturity",
       },
       {
         ar: "يُظهر اهتمامًا مبكرًا بالقراءة أو المفاهيم المجردة",
@@ -153,16 +153,16 @@ export const getDisabilityQuestions = (disabilityId: string) => {
         en: "Shows excellent performance in oral or practical tasks compared to written ones",
       },
       {
-        ar: "يعاني من صعوبة في تنظيم الأفكار أثناء الكتابة رغم وضوحها في المناقشة",
-        en: "Has difficulty organizing thoughts during writing despite their clarity in discussion",
+        ar: "يُظهر تنظيمًا مميزًا لأفكاره في المناقشات الشفهية مقارنة بالكتابة",
+        en: "Shows distinctive organization of ideas in oral discussions compared to writing",
       },
       {
         ar: "يتضايق من المهام التي تتطلب كتابة طويلة، ويفضل العرض الشفهي أو المرئي",
         en: "Gets frustrated with tasks requiring lengthy writing, prefers oral or visual presentation",
       },
       {
-        ar: "يخطئ في الإملاء رغم تكرار التدريب والممارسة",
-        en: "Makes spelling errors despite repeated training and practice",
+        ar: "يُظهر تفوقًا في التعبير الشفهي والمفاهيم المجردة أكثر من الجوانب الكتابية مثل الإملاء",
+        en: "Excels in oral expression and abstract concepts more than in written aspects such as spelling",
       },
       {
         ar: "يفهم التعليمات عند شرحها له شفهيًا، لكنه لا يتبع التعليمات المكتوبة بسهولة",
@@ -173,8 +173,8 @@ export const getDisabilityQuestions = (disabilityId: string) => {
         en: "Has strong analytical or logical abilities but struggles with slow completion of paper tasks",
       },
       {
-        ar: "يشعر بالإحباط أو تدني الثقة بالنفس بسبب ضعف الأداء الأكاديمي رغم الموهبة",
-        en: "Feels frustrated or has low self-confidence due to weak academic performance despite giftedness",
+        ar: "يُظهر وعيًا بقدراته المتقدمة ورغبة في تحسين أدائه الأكاديمي ليتناسب مع موهبته",
+        en: "Shows awareness of advanced abilities and a desire to improve academic performance to match their talent",
       },
     ],
     "hearing-impairment": [
@@ -199,8 +199,8 @@ export const getDisabilityQuestions = (disabilityId: string) => {
         en: "Excels in musical, literary, or linguistic activities",
       },
       {
-        ar: "يعبر عن أفكاره بطلاقة ووضوح شفهيًا",
-        en: "Expresses thoughts fluently and clearly orally",
+        ar: "يعوّض تأخره النسبي في اللغة المنطوقة بتفوق واضح في مجالات معرفية أو إبداعية أخرى",
+        en: "Compensates for relative delay in spoken language with clear excellence in other cognitive or creative areas",
       },
       {
         ar: "يستخدم حواسه الأخرى (اللمس والشم) بشكل إبداعي للتعلم",
