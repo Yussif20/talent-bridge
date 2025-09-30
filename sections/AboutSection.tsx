@@ -54,19 +54,19 @@ export default function AboutSection() {
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100/80 dark:bg-green-900/40 backdrop-blur-sm text-green-800 dark:text-green-200 text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
               {locale === "ar"
-                ? "فهم الطلاب ثنائيي الاستثناء"
+                ? "فهم الطلاب مزدوجي الاستثنائية"
                 : "Understanding 2e Students"}
             </div>
 
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8 leading-tight">
               {locale === "ar"
-                ? "ما هم الطلاب ثنائيي الاستثناء؟"
+                ? "ما هم الطلاب مزدوجي الاستثنائية؟"
                 : "What are Twice-Exceptional Students?"}
             </h2>
 
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
               {locale === "ar"
-                ? "الطلاب ثنائيي الاستثناء (2e) هم أفراد يظهرون قدرات استثنائية وتحديات تعلمية في آن واحد. قد يكونون موهوبين في مجالات معينة بينما يواجهون إعاقات مثل التوحد أو فرط الحركة أو اضطرابات التعلم."
+                ? "الطلاب مزدوجي الاستثنائية (2e) هم أفراد يظهرون قدرات استثنائية وتحديات تعلمية في آن واحد. قد يكونون موهوبين في مجالات معينة بينما يواجهون إعاقات مثل التوحد أو فرط الحركة أو اضطرابات التعلم."
                 : "Twice-exceptional (2e) students are individuals who demonstrate both exceptional abilities and learning challenges. They may be gifted in certain areas while having disabilities such as autism, ADHD, or learning disorders."}
             </p>
 
@@ -98,7 +98,7 @@ export default function AboutSection() {
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">
                   {locale === "ar"
-                    ? "من الطلاب ثنائيي الاستثناء"
+                    ? "من الطلاب مزدوجي الاستثنائية"
                     : "of students are 2e"}
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function AboutSection() {
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                     {locale === "ar"
-                      ? "تحديد الطلاب ثنائيي الاستثناء مبكراً يساعد في توفير الدعم المناسب لمواهبهم وتحدياتهم، مما يؤدي إلى نتائج تعليمية أفضل."
+                      ? "تحديد الطلاب مزدوجي الاستثنائية مبكراً يساعد في توفير الدعم المناسب لمواهبهم وتحدياتهم، مما يؤدي إلى نتائج تعليمية أفضل."
                       : "Identifying twice-exceptional students early helps provide appropriate support for both their gifts and challenges, leading to better educational outcomes."}
                   </p>
                 </div>
