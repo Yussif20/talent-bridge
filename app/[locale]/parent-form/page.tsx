@@ -45,6 +45,7 @@ export default function ParentForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saveSucceeded, setSaveSucceeded] = useState<boolean | null>(null);
 
   // Parent assessment questions
   const questions = [
@@ -162,6 +163,18 @@ export default function ParentForm() {
       const { totalPoints, percentage } = calculateResult();
       const isTwiceExceptional = percentage >= 60;
 
+      // Immediately show results regardless of save outcome
+      setResult({
+        result: totalPoints,
+        evaluation: isTwiceExceptional
+          ? t("results.twiceExceptional")
+          : t("results.notTwiceExceptional"),
+        disability: "",
+        percentage: percentage,
+        isTwiceExceptional: isTwiceExceptional,
+      });
+      setSaveSucceeded(null);
+
       // Prepare API request body according to new structure
       // Format today's date as YYYY-MM-DD
       const today = new Date();
@@ -172,66 +185,47 @@ export default function ParentForm() {
         gender: formData.gender,
         parentName: formData.parentName,
         birthDate: formData.birthDate,
-        checkerName: null, // Not available in parent form
+        checkerName: null,
         checkupDate: yyyyMmDd,
-        schoolName: null, // Not available in parent form
+        schoolName: null,
         isTalented: isTwiceExceptional,
         talentPercent: Number(percentage.toFixed(2)),
-        isDisabled: true, // Always true in parent form
+        isDisabled: true,
         disability: formData.disability,
-        disabilityPercent: 100, // Always 100% in parent form
+        disabilityPercent: 100,
         surveyType: "Parents",
       };
 
       console.log("Submitting to API:", requestBody);
 
-      const response = await fetch("/api/survey/surveyresult/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
+      // Do the save, and reflect status, but don't block showing results
+      (async () => {
+        try {
+          const response = await fetch("/api/survey/surveyresult/save", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          });
 
-      console.log("API Response status:", response.status);
+          console.log("API Response status:", response.status);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("API Error response:", errorText);
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error("API Error response:", errorText);
+            setSaveSucceeded(false);
+            return;
+          }
 
-      const apiResult = await response.json();
-      console.log("API Success:", apiResult);
-
-      // Set result for display
-      setResult({
-        result: totalPoints,
-        evaluation: isTwiceExceptional
-          ? t("results.twiceExceptional")
-          : t("results.notTwiceExceptional"),
-        disability: "",
-        percentage: percentage,
-        isTwiceExceptional: isTwiceExceptional,
-      });
-    } catch (error) {
-      console.error("Detailed error:", error);
-
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      const errorName =
-        error instanceof Error ? error.constructor.name : typeof error;
-
-      console.error("Error type:", errorName);
-      console.error("Error message:", errorMessage);
-
-      if (error instanceof TypeError && errorMessage.includes("fetch")) {
-        setError(t("results.networkError"));
-      } else if (errorMessage.includes("HTTP")) {
-        setError(t("results.serverError", { message: errorMessage }));
-      } else {
-        setError(t("results.error", { message: errorMessage }));
-      }
+          const apiResult = await response.json();
+          console.log("API Success:", apiResult);
+          setSaveSucceeded(true);
+        } catch (err) {
+          console.error("Save error:", err);
+          setSaveSucceeded(false);
+        }
+      })();
     } finally {
       setIsSubmitting(false);
     }
@@ -288,6 +282,60 @@ export default function ParentForm() {
             </div>
 
             <div className="space-y-6 mb-8">
+              {/* Save status indicator */}
+              <div className="rounded-2xl p-4 border flex items-center gap-3 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
+                {saveSucceeded === true ? (
+                  <svg
+                    className="w-6 h-6 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : saveSucceeded === false ? (
+                  <svg
+                    className="w-6 h-6 text-red-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-6 h-6 text-gray-500 animate-pulse"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3"
+                    />
+                  </svg>
+                )}
+                <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  {saveSucceeded === true
+                    ? t("results.saveStatus.saved")
+                    : saveSucceeded === false
+                    ? t("results.saveStatus.notSaved")
+                    : t("results.processing")}
+                </span>
+              </div>
+
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {t("results.percentageScore")}

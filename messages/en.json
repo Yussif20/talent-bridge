@@ -116,7 +116,12 @@
       "notTwiceExceptionalMessage": "The scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school.",
       "downloadGuide": "Download Parent Guide",
       "backToHome": "Back to Home",
-      "teacherForm": "Teacher Form"
+      "teacherForm": "Teacher Form",
+      "saveStatus": {
+        "saved": "Assessment was saved successfully",
+        "notSaved": "Assessment was not saved",
+        "label": "Save status"
+      }
     },
     "disclaimer": "These results are for educational screening purposes only and do not constitute a medical or psychological diagnosis. For a comprehensive evaluation, please consult a qualified specialist."
   },
