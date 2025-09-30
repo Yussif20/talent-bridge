@@ -144,9 +144,75 @@ export default function TeacherForm() {
           setError(tTeacher("validation.answerAllQuestions"));
           break;
         }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        setCurrentStep("disability-select");
-        setError(null);
+        // Calculate general score
+        const generalScore = formData.generalAnswers.reduce((sum, answer) => {
+          if (answer === 0) return sum + 0;
+          if (answer === 1) return sum + 5;
+          if (answer === 2) return sum + 10;
+          return sum;
+        }, 0);
+        const talentPercent = Number(generalScore.toFixed(2));
+        if (talentPercent < 60) {
+          // Show results immediately and save assessment
+          setResult({
+            result: generalScore,
+            evaluation:
+              locale === "ar"
+                ? "تشير نتائج المقياس إلى وجود مؤشرات مرتبطة بالإعاقة فقط، ولم تظهر مؤشرات كافية للموهبة في الوقت الحالي. هذا لا يتنافى مع إمكانية وجود قدرات مميزة مستقبلاً، ونوصي بمتابعة التقدم مع الفريق المختص في مدرستكم."
+                : "The scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school.",
+            disability: "",
+            talentPercent,
+            disabilityPercent: 0,
+            planFile: undefined,
+          });
+          setSaveSucceeded(null);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setCurrentStep("results");
+          setError(null);
+
+          // Save assessment in background
+          const today = new Date();
+          const yyyyMmDd = today.toISOString().slice(0, 10);
+          const requestBody = {
+            name: formData.basicInfo.studentName,
+            educationGrade: formData.basicInfo.grade,
+            gender: formData.basicInfo.gender,
+            parentName: formData.basicInfo.examinerName,
+            birthDate: formData.basicInfo.birthDate,
+            checkerName: formData.basicInfo.examinerName,
+            checkupDate: yyyyMmDd,
+            schoolName: formData.basicInfo.schoolName,
+            isTalented: false,
+            talentPercent,
+            isDisabled: false,
+            disability: "",
+            disabilityPercent: 0,
+            surveyType: "Teachers",
+          };
+          (async () => {
+            try {
+              const response = await fetch("/api/survey/surveyresult/save", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+              });
+              if (!response.ok) {
+                setSaveSucceeded(false);
+                return;
+              }
+              await response.json();
+              setSaveSucceeded(true);
+            } catch {
+              setSaveSucceeded(false);
+            }
+          })();
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setCurrentStep("disability-select");
+          setError(null);
+        }
         break;
       }
       case "disability-select":
