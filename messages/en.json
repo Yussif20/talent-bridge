@@ -138,5 +138,70 @@
     "rights": "All rights reserved.",
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms & Conditions"
+  },
+  "TeacherForm": {
+    "headerBadge": "Teacher Assessment",
+    "title": "Teacher Assessment Form for Twice-Exceptional Students",
+    "basicInfo": {
+      "title": "Basic Information",
+      "studentName": "Student Name",
+      "gender": "Gender",
+      "genderOptions": { "male": "Male", "female": "Female" },
+      "birthDate": "Birth Date",
+      "examinerName": "Examiner Name",
+      "examDate": "Exam/Observation Date",
+      "examinerTitle": "Examiner Title",
+      "schoolName": "School Name",
+      "grade": "Student's Grade Level"
+    },
+    "general": {
+      "title": "Behavioral Characteristics for Twice-Exceptional Students",
+      "subtitle": "General Behavioral Items"
+    },
+    "disabilitySelect": {
+      "title": "Select Disability Category for Assessment",
+      "subtitle": "Choose the most appropriate category based on your observations of the student"
+    },
+    "physicalDisability": {
+      "title": "Physical Disabilities - Additional Questions",
+      "questions": [
+        "Shows creativity or excellence in mental domains (e.g., analysis, critical thinking, or problem-solving) despite motor challenges.",
+        "Flexibly employs alternatives or assistive tools to showcase talent.",
+        "Clearly expresses thoughts and feelings verbally or in writing despite limited mobility.",
+        "Demonstrates high perseverance and determination to complete tasks compared to peers.",
+        "Innovates strategies to overcome physical constraints to achieve goals.",
+        "Shows high sensitivity and precision in intellectual or creative observations compensating for physical challenges.",
+        "Excels in mental or artistic activities (e.g., digital drawing, writing, programming, mental arithmetic).",
+        "Interacts positively with peers in group activities despite needing physical support.",
+        "Shows mature social and emotional awareness beyond chronological age.",
+        "Shows enthusiasm to participate in enrichment or research activities when appropriate accommodations are provided."
+      ]
+    },
+    "steps": {
+      "info": "Info",
+      "general": "General",
+      "physical": "Physical",
+      "category": "Category",
+      "specific": "Specific"
+    },
+    "buttons": {
+      "previous": "Previous",
+      "next": "Next",
+      "submitAssessment": "Submit Assessment",
+      "submitting": "Submitting...",
+      "backToHome": "Back to Home"
+    },
+    "validation": {
+      "requiredFields": "Please fill all required fields",
+      "answerAllQuestions": "Please answer all questions",
+      "selectDisability": "Please select a disability category"
+    },
+    "results": {
+      "titleSuccess": "Assessment Completed Successfully",
+      "assessmentPercentages": "Assessment Percentages",
+      "talentPercent": "Talent Percent",
+      "disabilityPercent": "Disability Percent",
+      "talentPercentageLabel": "Talent percentage: {percentage}%"
+    }
   }
 }

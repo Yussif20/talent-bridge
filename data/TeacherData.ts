@@ -64,6 +64,11 @@ export const disabilityCategories = [
     en: "Visual Impairment and Giftedness Related Behaviors",
   },
   {
+    id: "physical-disability",
+    ar: "البند السلوكي المرتبط بالإعاقة الجسدية والموهبة",
+    en: "Physical Disability and Giftedness Related Behaviors",
+  },
+  {
     id: "intellectual-disability",
     ar: "البند السلوكي المرتبط بالإعاقة الفكرية والموهبة",
     en: "Intellectual Disability and Giftedness Related Behaviors",
@@ -254,6 +259,48 @@ export const getDisabilityQuestions = (disabilityId: string) => {
       {
         ar: "يتميز بذاكرة بصرية قوية ويتذكر التفاصيل البصرية بدقة",
         en: "Has strong visual memory and remembers visual details accurately",
+      },
+    ],
+    "physical-disability": [
+      {
+        ar: "يُظهر إبداعًا أو تفوقًا في مجالات عقلية (مثل: التحليل، التفكير النقدي، أو حل المشكلات) رغم التحديات الحركية.",
+        en: "Shows creativity or excellence in mental domains (e.g., analysis, critical thinking, or problem-solving) despite motor challenges.",
+      },
+      {
+        ar: "يوظّف بدائل أو أدوات مساعدة بمرونة لإبراز موهبته.",
+        en: "Flexibly employs alternatives or assistive tools to showcase talent.",
+      },
+      {
+        ar: "يعبر بوضوح عن أفكاره ومشاعره شفهيًا أو كتابيًا رغم محدودية الحركة.",
+        en: "Clearly expresses thoughts and feelings verbally or in writing despite limited mobility.",
+      },
+      {
+        ar: "يُبدي مثابرة عالية وإصرارًا على إنجاز المهام مقارنة بأقرانه.",
+        en: "Demonstrates high perseverance and determination to complete tasks compared to peers.",
+      },
+      {
+        ar: "يبتكر استراتيجيات للتغلب على القيود الجسدية لتحقيق أهدافه.",
+        en: "Innovates strategies to overcome physical constraints to achieve goals.",
+      },
+      {
+        ar: "يظهر حساسية عالية ودقة في الملاحظات الفكرية أو الإبداعية تعوّض التحديات البدنية.",
+        en: "Shows high sensitivity and precision in intellectual or creative observations compensating for physical challenges.",
+      },
+      {
+        ar: "يبرع في الأنشطة الذهنية أو الفنية (مثل: الرسم الرقمي، التأليف، البرمجة، الحساب الذهني).",
+        en: "Excels in mental or artistic activities (e.g., digital drawing, writing, programming, mental arithmetic).",
+      },
+      {
+        ar: "يتفاعل إيجابيًا مع زملائه في الأنشطة الجماعية رغم حاجته لدعم جسدي.",
+        en: "Interacts positively with peers in group activities despite needing physical support.",
+      },
+      {
+        ar: "يظهر وعيًا اجتماعيًا وعاطفيًا ناضجًا يفوق عمره الزمني.",
+        en: "Shows mature social and emotional awareness beyond chronological age.",
+      },
+      {
+        ar: "يُظهر حماسًا للمشاركة في الأنشطة الإثرائية أو البحثية إذا أُتيحت له التسهيلات المناسبة.",
+        en: "Shows enthusiasm to participate in enrichment or research activities when appropriate accommodations are provided.",
       },
     ],
     "intellectual-disability": [

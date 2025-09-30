@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -46,6 +46,8 @@ type FormStep =
 
 export default function TeacherForm() {
   const locale = useLocale();
+  const tParent = useTranslations("ParentForm");
+  const tTeacher = useTranslations("TeacherForm");
   const today = new Date();
   const eighteenYearsAgo = new Date(
     today.getFullYear() - 18,
@@ -134,87 +136,16 @@ export default function TeacherForm() {
           setCurrentStep("general");
           setError(null);
         } else {
-          setError(
-            locale === "ar"
-              ? "يرجى ملء جميع الحقول المطلوبة"
-              : "Please fill all required fields"
-          );
+          setError(tTeacher("validation.requiredFields"));
         }
         break;
       case "general": {
         if (!validateGeneralAnswers()) {
-          setError(
-            locale === "ar"
-              ? "يرجى الإجابة على جميع الأسئلة"
-              : "Please answer all questions"
-          );
+          setError(tTeacher("validation.answerAllQuestions"));
           break;
         }
-        const totalPoints = formData.generalAnswers.reduce((sum, answer) => {
-          if (answer === 0) return sum + 0;
-          if (answer === 1) return sum + 5;
-          if (answer === 2) return sum + 10;
-          return sum;
-        }, 0);
-        const percentage = totalPoints;
-        if (percentage < 60) {
-          const yyyyMmDd = today.toISOString().slice(0, 10);
-          const requestBody = {
-            name: formData.basicInfo.studentName,
-            educationGrade: formData.basicInfo.grade,
-            gender: formData.basicInfo.gender,
-            parentName: formData.basicInfo.examinerName,
-            birthDate: formData.basicInfo.birthDate,
-            checkerName: formData.basicInfo.examinerName,
-            checkupDate: yyyyMmDd,
-            schoolName: formData.basicInfo.schoolName,
-            isTalented: false,
-            talentPercent: Number(percentage.toFixed(2)),
-            isDisabled: false,
-            disability: "",
-            disabilityPercent: 0,
-            surveyType: "Teachers",
-          };
-          // Show results immediately
-          setResult({
-            result: percentage,
-            evaluation:
-              locale === "ar"
-                ? `النسبة المئوية للموهبة: ${percentage}%\nمقياس النتائج يشير إلى وجود مؤشرات تتعلق بالإعاقة فقط، وعدم كفاية مؤشرات الموهبة في الوقت الحالي. هذا لا يتعارض مع إمكانية وجود قدرات مميزة في المستقبل، ونوصي بمتابعة التقدم مع الفريق المتخصص في مدرستك.`
-                : `Talent percentage: ${percentage}%\nThe scale results indicate the presence of indicators related to disability only, and insufficient indicators of giftedness at this time. This does not conflict with the possibility of having distinctive abilities in the future, and we recommend following up on progress with the specialized team at your school.`,
-            disability: "",
-            talentPercent: percentage,
-            disabilityPercent: 0,
-            planFile: undefined,
-          });
-          setSaveSucceeded(null);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          setCurrentStep("results");
-
-          // Save in background
-          (async () => {
-            try {
-              const response = await fetch("/api/survey/surveyresult/save", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(requestBody),
-              });
-              if (!response.ok) {
-                setSaveSucceeded(false);
-                return;
-              }
-              await response.json();
-              setSaveSucceeded(true);
-            } catch {
-              setSaveSucceeded(false);
-            }
-          })();
-        } else {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          setCurrentStep("disability-select");
-        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setCurrentStep("disability-select");
         setError(null);
         break;
       }
@@ -224,11 +155,7 @@ export default function TeacherForm() {
           setCurrentStep("disability-form");
           setError(null);
         } else {
-          setError(
-            locale === "ar"
-              ? "يرجى اختيار فئة الإعاقة"
-              : "Please select a disability category"
-          );
+          setError(tTeacher("validation.selectDisability"));
         }
         break;
       case "disability-form":
@@ -389,12 +316,12 @@ export default function TeacherForm() {
   const renderBasicInfoStep = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        {locale === "ar" ? "بيانات أولية" : "Basic Information"}
+        {tTeacher("basicInfo.title")}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar" ? "اسم الطالب" : "Student Name"} *
+            {tTeacher("basicInfo.studentName")} *
           </label>
           <input
             type="text"
@@ -408,7 +335,7 @@ export default function TeacherForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar" ? "الجنس" : "Gender"} *
+            {tTeacher("basicInfo.gender")} *
           </label>
           <div className="flex gap-4">
             <label className="flex items-center cursor-pointer">
@@ -421,10 +348,10 @@ export default function TeacherForm() {
                   handleBasicInfoChange("gender", e.target.value)
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                aria-label={locale === "ar" ? "ذكر" : "Male"}
+                aria-label={tTeacher("basicInfo.genderOptions.male")}
               />
               <span className="ml-2 text-gray-700 dark:text-gray-300">
-                {locale === "ar" ? "ذكر" : "Male"}
+                {tTeacher("basicInfo.genderOptions.male")}
               </span>
             </label>
             <label className="flex items-center cursor-pointer">
@@ -437,17 +364,17 @@ export default function TeacherForm() {
                   handleBasicInfoChange("gender", e.target.value)
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                aria-label={locale === "ar" ? "أنثى" : "Female"}
+                aria-label={tTeacher("basicInfo.genderOptions.female")}
               />
               <span className="ml-2 text-gray-700 dark:text-gray-300">
-                {locale === "ar" ? "أنثى" : "Female"}
+                {tTeacher("basicInfo.genderOptions.female")}
               </span>
             </label>
           </div>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar" ? "تاريخ الميلاد" : "Birth Date"} *
+            {tTeacher("basicInfo.birthDate")} *
           </label>
           <input
             type="date"
@@ -461,7 +388,7 @@ export default function TeacherForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar" ? "اسم الفاحص" : "Examiner Name"} *
+            {tTeacher("basicInfo.examinerName")} *
           </label>
           <input
             type="text"
@@ -475,10 +402,7 @@ export default function TeacherForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar"
-              ? "تاريخ الفحص/ الملاحظة"
-              : "Exam/Observation Date"}{" "}
-            *
+            {tTeacher("basicInfo.examDate")} *
           </label>
           <input
             type="date"
@@ -490,7 +414,7 @@ export default function TeacherForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar" ? "صفة الفاحص" : "Examiner Title"} *
+            {tTeacher("basicInfo.examinerTitle")} *
           </label>
           <input
             type="text"
@@ -504,7 +428,7 @@ export default function TeacherForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar" ? "اسم المدرسة" : "School Name"} *
+            {tTeacher("basicInfo.schoolName")} *
           </label>
           <input
             type="text"
@@ -518,8 +442,7 @@ export default function TeacherForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {locale === "ar" ? "الصف الدراسي للطالب" : "Student's Grade Level"}{" "}
-            *
+            {tTeacher("basicInfo.grade")} *
           </label>
           <input
             type="text"
@@ -537,12 +460,10 @@ export default function TeacherForm() {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          {locale === "ar"
-            ? "الخصائص السلوكية لمزدوجي الاستثنائية"
-            : "Behavioral Characteristics for Twice-Exceptional Students"}
+          {tTeacher("general.title")}
         </h2>
         <p className="text-gray-600 dark:text-gray-300">
-          {locale === "ar" ? "البند السلوكي العام" : "General Behavioral Items"}
+          {tTeacher("general.subtitle")}
         </p>
       </div>
 
@@ -612,14 +533,10 @@ export default function TeacherForm() {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          {locale === "ar"
-            ? "اختر فئة الإعاقة للتقييم"
-            : "Select Disability Category for Assessment"}
+          {tTeacher("disabilitySelect.title")}
         </h2>
         <p className="text-gray-600 dark:text-gray-300">
-          {locale === "ar"
-            ? "اختر الفئة الأنسب بناءً على ملاحظاتك للطالب"
-            : "Choose the most appropriate category based on your observations of the student"}
+          {tTeacher("disabilitySelect.subtitle")}
         </p>
       </div>
 
@@ -756,9 +673,7 @@ export default function TeacherForm() {
       </div>
 
       <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-        {locale === "ar"
-          ? "تم إرسال التقييم بنجاح"
-          : "Assessment Completed Successfully"}
+        {tTeacher("results.titleSuccess")}
       </h1>
 
       {/* Save status indicator */}
@@ -808,30 +723,24 @@ export default function TeacherForm() {
         )}
         <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
           {saveSucceeded === true
-            ? locale === "ar"
-              ? "تم حفظ التقييم بنجاح"
-              : "Assessment was saved successfully"
+            ? tParent("results.saveStatus.saved")
             : saveSucceeded === false
-            ? locale === "ar"
-              ? "لم يتم حفظ التقييم"
-              : "Assessment was not saved"
-            : locale === "ar"
-            ? "جاري معالجة تقييمك..."
-            : "Processing your assessment..."}
+            ? tParent("results.saveStatus.notSaved")
+            : tParent("results.processing")}
         </span>
       </div>
 
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 mb-4">
         <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">
-          {locale === "ar" ? "نسب التقييم" : "Assessment Percentages"}
+          {tTeacher("results.assessmentPercentages")}
         </h3>
         <p className="text-xl font-bold text-green-600 dark:text-green-400 mb-2">
-          {locale === "ar" ? "نسبة الموهبة" : "Talent Percent"}:{" "}
+          {tTeacher("results.talentPercent")}:{" "}
           {result?.talentPercent?.toFixed(1)}%
         </p>
         {result?.talentPercent !== undefined && result?.talentPercent >= 60 && (
           <p className="text-xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-            {locale === "ar" ? "نسبة الإعاقة" : "Disability Percent"}:{" "}
+            {tTeacher("results.disabilityPercent")}:{" "}
             {result?.disabilityPercent?.toFixed(1)}%
           </p>
         )}
@@ -891,7 +800,7 @@ export default function TeacherForm() {
           href={`/${locale}`}
           className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors"
         >
-          {locale === "ar" ? "العودة للرئيسية" : "Back to Home"}
+          {tTeacher("buttons.backToHome")}
         </Link>
       </div>
     </div>
@@ -1004,13 +913,11 @@ export default function TeacherForm() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100/80 dark:bg-blue-900/40 backdrop-blur-sm text-blue-800 dark:text-blue-200 text-sm font-medium mb-6">
             <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-            {locale === "ar" ? "تقييم المعلم" : "Teacher Assessment"}
+            {tTeacher("headerBadge")}
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-            {locale === "ar"
-              ? "استمارة تقييم المعلم للطلاب ثنائيي الاستثناء"
-              : "Teacher Assessment Form for Twice-Exceptional Students"}
+            {tTeacher("title")}
           </h1>
         </div>
 
@@ -1038,7 +945,7 @@ export default function TeacherForm() {
                   : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
               }`}
             >
-              {locale === "ar" ? "السابق" : "Previous"}
+              {tTeacher("buttons.previous")}
             </button>
 
             <button
@@ -1049,16 +956,10 @@ export default function TeacherForm() {
               }`}
             >
               {isSubmitting
-                ? locale === "ar"
-                  ? "جارٍ الإرسال..."
-                  : "Submitting..."
+                ? tTeacher("buttons.submitting")
                 : currentStep === "disability-form"
-                ? locale === "ar"
-                  ? "إرسال التقييم"
-                  : "Submit Assessment"
-                : locale === "ar"
-                ? "التالي"
-                : "Next"}
+                ? tTeacher("buttons.submitAssessment")
+                : tTeacher("buttons.next")}
             </button>
           </div>
         </div>
@@ -1069,7 +970,7 @@ export default function TeacherForm() {
             href={`/${locale}`}
             className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
-            {locale === "ar" ? "العودة للرئيسية" : "Back to Home"}
+            {tTeacher("buttons.backToHome")}
           </Link>
         </div>
       </div>
