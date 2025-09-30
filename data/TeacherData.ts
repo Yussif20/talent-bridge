@@ -1,44 +1,44 @@
 // General assessment questions (10 questions)
 export const generalQuestions = [
   {
-    ar: "يُظهر تباينًا ملحوظًا بين الأداء الأكاديمي والقدرات المعرفية",
-    en: "Shows noticeable variation between academic performance and cognitive abilities",
+    ar: "يُظهر قدرات معرفية متقدمة مقارنة بالأداء الأكاديمي الظاهر.",
+    en: "Shows advanced cognitive abilities compared to apparent academic performance.",
   },
   {
-    ar: "لديه اهتمامات متقدمة أو غير معتادة في مجالات محددة",
-    en: "Has advanced or unusual interests in specific areas",
+    ar: "لديه اهتمامات نوعية أو غير مألوفة تدل على تفوق في مجالات محددة.",
+    en: "Has specialized or unusual interests indicating excellence in specific domains.",
   },
   {
-    ar: "يطرح أسئلة عميقة أو غير تقليدية تدل على تفكير نقدي",
-    en: "Asks deep or unconventional questions showing critical thinking",
+    ar: "يطرح أسئلة عميقة وغير تقليدية تكشف عن تفكير نقدي مميز.",
+    en: "Asks deep, unconventional questions that reveal distinctive critical thinking.",
   },
   {
-    ar: "يعاني من صعوبات في المهارات الأساسية رغم أدائه العالي في مهارات أخرى",
-    en: "Struggles with basic skills despite high performance in other skills",
+    ar: "يُظهر تفوقًا في مهارات محددة يتجاوز بها أقرانه.",
+    en: "Demonstrates superiority in specific skills beyond peers.",
   },
   {
-    ar: "يُظهر مشاعر الإحباط أو تدني احترام الذات بسبب الفجوة بين قدراته وأدائه",
-    en: "Shows frustration or low self-esteem due to gap between abilities and performance",
+    ar: "يُعبّر عن وعي داخلي عميق بفجوة إمكاناته مما يدل على إدراك ذاتي متقدم.",
+    en: "Expresses deep self-awareness of the gap in potential, indicating advanced self-perception.",
   },
   {
-    ar: "يعمل بشكل أفضل عند منحه وقتًا إضافيًا أو دعمًا مخصصًا",
-    en: "Works better when given extra time or specialized support",
+    ar: "يحقق أداءً أفضل عند توفير وقت إضافي أو دعم مخصص.",
+    en: "Performs better when provided extra time or targeted support.",
   },
   {
-    ar: "يتفاعل بشكل إيجابي مع الأنشطة الإبداعية أو الاستكشافية",
-    en: "Responds positively to creative or exploratory activities",
+    ar: "يتفاعل بفاعلية مع الأنشطة الإبداعية أو الاستكشافية.",
+    en: "Engages effectively with creative or exploratory activities.",
   },
   {
-    ar: "يميل إلى العزلة أو الانسحاب في البيئات غير الداعمة",
-    en: "Tends to isolate or withdraw in unsupportive environments",
+    ar: "يفضل البيئات الداعمة التي تتيح له إبراز إمكاناته الفكرية والإبداعية.",
+    en: "Prefers supportive environments that allow showcasing intellectual and creative potential.",
   },
   {
-    ar: "يعاني من صعوبة في تنظيم المهام أو تتبع التعليمات المتعددة",
-    en: "Has difficulty organizing tasks or following multiple instructions",
+    ar: "يُظهر حاجة إلى تنظيم المهام بطرق مبتكرة كي يعكس قدراته الحقيقية.",
+    en: "Shows a need to organize tasks in innovative ways to reflect true abilities.",
   },
   {
-    ar: "يظهر أداء غير متوازن بين التقييمات الشفهية والتحريرية",
-    en: "Shows unbalanced performance between oral and written assessments",
+    ar: "يُبرز أداءً متميزًا في التقييمات الشفهية مقارنة بالتحريرية.",
+    en: "Exhibits outstanding performance in oral assessments compared to written ones.",
   },
 ];
 // Disability categories
