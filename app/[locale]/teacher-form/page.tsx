@@ -47,12 +47,19 @@ type FormStep =
 export default function TeacherForm() {
   const locale = useLocale();
   const today = new Date();
-  const maxBirthDateObj = new Date(
+  const eighteenYearsAgo = new Date(
     today.getFullYear() - 18,
     today.getMonth(),
     today.getDate()
   );
-  const maxBirthDate = maxBirthDateObj.toISOString().slice(0, 10);
+  const formatLocalDate = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${da}`;
+  };
+  const minBirthDate = formatLocalDate(eighteenYearsAgo);
+  const maxBirthDate = formatLocalDate(today);
 
   const formSteps: FormStep[] = [
     "basic",
@@ -446,6 +453,7 @@ export default function TeacherForm() {
             type="date"
             value={formData.basicInfo.birthDate}
             onChange={(e) => handleBasicInfoChange("birthDate", e.target.value)}
+            min={minBirthDate}
             max={maxBirthDate}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
             required
