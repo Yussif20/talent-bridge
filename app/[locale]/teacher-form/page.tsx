@@ -722,7 +722,7 @@ export default function TeacherForm() {
 
   const renderResultsStep = () => (
     <div className="text-center space-y-8">
-      <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
+      {/* <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
         <svg
           className="w-10 h-10 text-green-600 dark:text-green-400"
           fill="none"
@@ -736,11 +736,11 @@ export default function TeacherForm() {
             d="M5 13l4 4L19 7"
           />
         </svg>
-      </div>
+      </div> */}
 
-      <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+      {/* <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
         {tTeacher("results.titleSuccess")}
-      </h1>
+      </h1> */}
 
       {/* Save status indicator */}
       <div className="rounded-2xl p-4 border inline-flex items-center gap-3 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
