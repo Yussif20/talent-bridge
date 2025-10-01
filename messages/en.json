@@ -12,7 +12,7 @@
     "assessmentTitle": "Comprehensive Assessment",
     "assessmentDesc": "Detailed behavioral screening forms for both teachers and parents to identify giftedness and disabilities.",
     "instantResultsTitle": "Instant Results",
-    "instantResultsDesc": "Immediate scoring and classification with detailed analysis of strengths and challenges.",
+    "instantResultsDesc": "Immediate scoring and classification with analysis of strengths and challenges.",
     "planningTitle": "Individualized Planning",
     "planningDesc": "Customized 4-week intervention plans based on assessment results.",
     "reportingTitle": "Professional Reports",
@@ -20,7 +20,7 @@
   },
   "Hero": {
     "title": "Supporting Twice-Exceptional Students",
-    "subtitle": "A comprehensive web application to screen for gifted students with disabilities, providing instant assessment results and individualized educational plans.",
+    "subtitle": "A comprehensive web application aim to identify twice-exceptional, providing instant assessment results and individualized educational plans.",
     "teacherCta": "Teacher Form",
     "parentCta": "Parent Form"
   },
