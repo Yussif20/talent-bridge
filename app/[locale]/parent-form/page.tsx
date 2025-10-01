@@ -513,7 +513,7 @@ export default function ParentForm() {
                   <option value="Learning-Disabilities">
                     {t("form.disabilityOptions.Learning_Disabilities")}
                   </option>
-                  <option value="Visual-ImpairmentBraille">
+                  <option value="Visual-Impairment-Braille ">
                     {t("form.disabilityOptions.Visual_Impairment_Braille")}
                   </option>
                   <option value="Physical-Disability">
