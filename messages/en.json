@@ -20,7 +20,7 @@
   },
   "Hero": {
     "title": "Supporting Twice-Exceptional Students",
-    "subtitle": "A comprehensive web application aim to identify twice-exceptional, providing instant assessment results and individualized educational plans.",
+    "subtitle": "A comprehensive web application aim to identify twice-exceptional students, providing instant assessment results and individualized educational plans.",
     "teacherCta": "Teacher Form",
     "parentCta": "Parent Form"
   },
@@ -108,7 +108,7 @@
       "error": "There was an error processing your assessment: {message}",
       "networkError": "Network error: Please check your internet connection. This might be a CORS issue - try running the app on a server.",
       "serverError": "Server error: {message}",
-      "percentageScore": "Percentage Score",
+      "percentageScore": "Talent Percentage",
       "congratulations": "Congratulations!",
       "twiceExceptional": "Twice-Exceptional Student",
       "twiceExceptionalMessage": "The results indicate that your child shows strong indicators of being a Twice-Exceptional student (gifted with learning challenges). This means they possess high abilities in certain areas while having some challenges in others.",
