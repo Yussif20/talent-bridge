@@ -181,6 +181,7 @@ export default function ParentForm() {
         isTwiceExceptional: isTwiceExceptional,
       });
       setSaveSucceeded(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
 
       // Prepare API request body according to new structure
       // Format today's date as YYYY-MM-DD
@@ -235,6 +236,7 @@ export default function ParentForm() {
       })();
     } finally {
       setIsSubmitting(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 

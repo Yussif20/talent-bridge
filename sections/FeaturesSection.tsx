@@ -31,14 +31,14 @@ export default function FeaturesSection() {
       bgColor: "bg-purple-50 dark:bg-purple-900/20",
       iconBg: "bg-purple-100 dark:bg-purple-900/50",
     },
-    {
-      icon: "📊",
-      title: t("reportingTitle"),
-      description: t("reportingDesc"),
-      gradient: "from-orange-500 to-red-500",
-      bgColor: "bg-orange-50 dark:bg-orange-900/20",
-      iconBg: "bg-orange-100 dark:bg-orange-900/50",
-    },
+    // {
+    //   icon: "📊",
+    //   title: t("reportingTitle"),
+    //   description: t("reportingDesc"),
+    //   gradient: "from-orange-500 to-red-500",
+    //   bgColor: "bg-orange-50 dark:bg-orange-900/20",
+    //   iconBg: "bg-orange-100 dark:bg-orange-900/50",
+    // },
   ];
 
   return (
@@ -65,13 +65,13 @@ export default function FeaturesSection() {
 
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             {locale === "ar"
-              ? "نوفر حلولاً شاملة لتحديد ودعم الطلاب ثنائيي الاستثناء من خلال أدوات تقييم متطورة وخطط تدخل مخصصة."
+              ? "نوفر حلولاً شاملة لتحديد ودعم الطلاب مزدوجي الاستثنائية من خلال أدوات تقييم متطورة وخطط تدخل مخصصة."
               : "Comprehensive solutions for identifying and supporting twice-exceptional students through advanced assessment tools and personalized intervention plans."}
           </p>
         </div>
 
         {/* Features grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -101,7 +101,7 @@ export default function FeaturesSection() {
 
                 {/* Arrow indicator */}
                 <div className="mt-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                  <div className="inline-flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium">
+                  {/* <div className="inline-flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium">
                     {locale === "ar" ? "اعرف المزيد" : "Learn more"}
                     <svg
                       className={`w-4 h-4 ${
@@ -118,7 +118,7 @@ export default function FeaturesSection() {
                         d="M17 8l4 4m0 0l-4 4m4-4H3"
                       />
                     </svg>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

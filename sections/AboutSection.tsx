@@ -60,8 +60,8 @@ export default function AboutSection() {
 
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8 leading-tight">
               {locale === "ar"
-                ? "ما هم الطلاب مزدوجي الاستثنائية؟"
-                : "What are Twice-Exceptional Students?"}
+                ? "من هم الطلاب مزدوجي الاستثنائية؟"
+                : "ًWho are Twice-Exceptional Students?"}
             </h2>
 
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
