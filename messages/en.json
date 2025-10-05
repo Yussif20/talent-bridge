@@ -92,9 +92,9 @@
         "q15": "Shows artistic sense or special inclinations in specific areas (music, design, scientific experiments...)."
       },
       "options": {
-        "never": "Never (0)",
-        "sometimes": "Sometimes (1)",
-        "always": "Always (2)"
+        "never": "Does Not Apply",
+        "sometimes": "Sometimes",
+        "always": "Always"
       },
       "submit": "Submit Assessment",
       "submitting": "Submitting...",
