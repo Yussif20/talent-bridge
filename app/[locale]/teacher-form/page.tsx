@@ -15,7 +15,6 @@ interface BasicInfo {
   gender: string;
   birthDate: string;
   examinerName: string;
-  examDate: string;
   examinerTitle: string;
   schoolName: string;
   grade: string;
@@ -77,7 +76,6 @@ export default function TeacherForm() {
       gender: "",
       birthDate: "",
       examinerName: "",
-      examDate: "",
       examinerTitle: "",
       schoolName: "",
       grade: "",
@@ -462,18 +460,6 @@ export default function TeacherForm() {
             onChange={(e) =>
               handleBasicInfoChange("examinerName", e.target.value)
             }
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {tTeacher("basicInfo.examDate")} *
-          </label>
-          <input
-            type="date"
-            value={formData.basicInfo.examDate}
-            onChange={(e) => handleBasicInfoChange("examDate", e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
             required
           />
