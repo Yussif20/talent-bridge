@@ -53,6 +53,9 @@ export default function ParentForm() {
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saveSucceeded, setSaveSucceeded] = useState<boolean | null>(null);
+  const [satisfactionRating, setSatisfactionRating] = useState<number>(0);
+  const [showSatisfactionForm, setShowSatisfactionForm] = useState(false);
+  const [isSavingSatisfaction, setIsSavingSatisfaction] = useState(false);
 
   // Parent assessment questions
   const questions = [
@@ -170,7 +173,7 @@ export default function ParentForm() {
       const { totalPoints, percentage } = calculateResult();
       const isTwiceExceptional = percentage >= 60;
 
-      // Immediately show results regardless of save outcome
+      // Immediately show results without saving to database yet
       setResult({
         result: totalPoints,
         evaluation: isTwiceExceptional
@@ -180,11 +183,23 @@ export default function ParentForm() {
         percentage: percentage,
         isTwiceExceptional: isTwiceExceptional,
       });
+      setShowSatisfactionForm(true);
       setSaveSucceeded(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setIsSubmitting(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
-      // Prepare API request body according to new structure
-      // Format today's date as YYYY-MM-DD
+  const handleSatisfactionSubmit = async () => {
+    setIsSavingSatisfaction(true);
+
+    try {
+      const { totalPoints, percentage } = calculateResult();
+      const isTwiceExceptional = percentage >= 60;
+
+      // Prepare API request body with satisfaction rating
       const today = new Date();
       const yyyyMmDd = today.toISOString().slice(0, 10);
       const requestBody = {
@@ -202,41 +217,37 @@ export default function ParentForm() {
         disability: formData.disability,
         disabilityPercent: 100,
         surveyType: "Parents",
+        satisfactionPercent: satisfactionRating,
       };
 
       console.log("Submitting to API:", requestBody);
 
-      // Do the save, and reflect status, but don't block showing results
-      (async () => {
-        try {
-          const response = await fetch("/api/survey/surveyresult/save", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          });
+      const response = await fetch("/api/survey/surveyresult/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
-          console.log("API Response status:", response.status);
+      console.log("API Response status:", response.status);
 
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error("API Error response:", errorText);
-            setSaveSucceeded(false);
-            return;
-          }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error response:", errorText);
+        setSaveSucceeded(false);
+        return;
+      }
 
-          const apiResult = await response.json();
-          console.log("API Success:", apiResult);
-          setSaveSucceeded(true);
-        } catch (err) {
-          console.error("Save error:", err);
-          setSaveSucceeded(false);
-        }
-      })();
+      const apiResult = await response.json();
+      console.log("API Success:", apiResult);
+      setSaveSucceeded(true);
+      setShowSatisfactionForm(false);
+    } catch (err) {
+      console.error("Save error:", err);
+      setSaveSucceeded(false);
     } finally {
-      setIsSubmitting(false);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setIsSavingSatisfaction(false);
     }
   };
 
@@ -291,59 +302,47 @@ export default function ParentForm() {
             </div>
 
             <div className="space-y-6 mb-8">
-              {/* Save status indicator */}
-              <div className="rounded-2xl p-4 border flex items-center gap-3 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
-                {saveSucceeded === true ? (
-                  <svg
-                    className="w-6 h-6 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                ) : saveSucceeded === false ? (
-                  <svg
-                    className="w-6 h-6 text-red-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-6 h-6 text-gray-500 animate-pulse"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3"
-                    />
-                  </svg>
-                )}
-                <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                  {saveSucceeded === true
-                    ? t("results.saveStatus.saved")
-                    : saveSucceeded === false
-                    ? t("results.saveStatus.notSaved")
-                    : t("results.processing")}
-                </span>
-              </div>
+              {/* Save status indicator - Only show after satisfaction submit */}
+              {!showSatisfactionForm && (
+                <div className="rounded-2xl p-4 border flex items-center gap-3 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
+                  {saveSucceeded === true ? (
+                    <svg
+                      className="w-6 h-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : saveSucceeded === false ? (
+                    <svg
+                      className="w-6 h-6 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  ) : null}
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    {saveSucceeded === true
+                      ? t("results.saveStatus.saved")
+                      : saveSucceeded === false
+                      ? t("results.saveStatus.notSaved")
+                      : ""}
+                  </span>
+                </div>
+              )}
 
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -363,32 +362,34 @@ export default function ParentForm() {
                     <p className="text-green-800 dark:text-green-200 mb-4">
                       {t("results.twiceExceptionalMessage")}
                     </p>
-                    <button
-                      onClick={() => {
-                        const fileName = formData.disability;
-                        if (!fileName) return;
-                        const link = document.createElement("a");
-                        link.href = `/${locale}/${fileName}.pdf`;
-                        link.download = fileName;
-                        link.click();
-                      }}
-                      className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors inline-flex items-center gap-2"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                    {!showSatisfactionForm && (
+                      <button
+                        onClick={() => {
+                          const fileName = formData.disability;
+                          if (!fileName) return;
+                          const link = document.createElement("a");
+                          link.href = `/${locale}/${fileName}.pdf`;
+                          link.download = fileName;
+                          link.click();
+                        }}
+                        className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors inline-flex items-center gap-2"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      {t("results.downloadGuide")}
-                    </button>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        {t("results.downloadGuide")}
+                      </button>
+                    )}
                   </div>
                 </>
               ) : (
@@ -401,21 +402,83 @@ export default function ParentForm() {
                   </p>
                 </div>
               )}
+
+              {/* Satisfaction Rating Form */}
+              {showSatisfactionForm && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+                  <h3 className="text-xl font-semibold text-blue-900 dark:text-blue-300 mb-4 text-center">
+                    {locale === "ar"
+                      ? "مدى رضاك عن الخدمة"
+                      : "Rate Your Satisfaction"}
+                  </h3>
+
+                  <div className="flex justify-center gap-2 mb-6">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => setSatisfactionRating(star * 20)}
+                        className="transition-all duration-200 transform hover:scale-110"
+                        aria-label={`${star} ${
+                          locale === "ar" ? "نجوم" : "stars"
+                        }`}
+                      >
+                        <svg
+                          className={`w-12 h-12 ${
+                            satisfactionRating >= star * 20
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-gray-300 dark:text-gray-600"
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                          />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+
+                  {satisfactionRating > 0 && (
+                    <p className="text-center text-gray-700 dark:text-gray-300 mb-4">
+                      {locale === "ar"
+                        ? `تقييمك: ${satisfactionRating}%`
+                        : `Your rating: ${satisfactionRating}%`}
+                    </p>
+                  )}
+
+                  <button
+                    onClick={handleSatisfactionSubmit}
+                    disabled={satisfactionRating === 0 || isSavingSatisfaction}
+                    className={`w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+                      isSavingSatisfaction ? "animate-pulse" : ""
+                    }`}
+                  >
+                    {isSavingSatisfaction
+                      ? locale === "ar"
+                        ? "جاري الحفظ..."
+                        : "Saving..."
+                      : locale === "ar"
+                      ? "إرسال التقييم"
+                      : "Submit Rating"}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href={`/${locale}`}
-                className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors text-center"
-              >
-                {t("results.backToHome")}
-              </Link>
-              {/* <Link
-                href={`/${locale}/teacher-form`}
-                className="px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-center"
-              >
-                {t("results.teacherForm")}
-              </Link> */}
+              {!showSatisfactionForm && (
+                <Link
+                  href={`/${locale}`}
+                  className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors text-center"
+                >
+                  {t("results.backToHome")}
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -513,7 +576,7 @@ export default function ParentForm() {
                   <option value="Learning-Disabilities">
                     {t("form.disabilityOptions.Learning_Disabilities")}
                   </option>
-                  <option value="Visual-Impairment-Braille ">
+                  <option value="Visual-Impairment-Braille">
                     {t("form.disabilityOptions.Visual_Impairment_Braille")}
                   </option>
                   <option value="Physical-Disability">

@@ -87,6 +87,9 @@ export default function TeacherForm() {
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saveSucceeded, setSaveSucceeded] = useState<boolean | null>(null);
+  const [satisfactionRating, setSatisfactionRating] = useState<number>(0);
+  const [showSatisfactionForm, setShowSatisfactionForm] = useState(false);
+  const [isSavingSatisfaction, setIsSavingSatisfaction] = useState(false);
 
   const handleBasicInfoChange = (field: keyof BasicInfo, value: string) => {
     setFormData((prev) => ({
@@ -151,7 +154,7 @@ export default function TeacherForm() {
         }, 0);
         const talentPercent = Number(generalScore.toFixed(2));
         if (talentPercent < 60) {
-          // Show results immediately and save assessment
+          // Show results immediately without saving to database
           setResult({
             result: generalScore,
             evaluation:
@@ -163,49 +166,11 @@ export default function TeacherForm() {
             disabilityPercent: 0,
             planFile: undefined,
           });
+          setShowSatisfactionForm(true);
           setSaveSucceeded(null);
           window.scrollTo({ top: 0, behavior: "smooth" });
           setCurrentStep("results");
           setError(null);
-
-          // Save assessment in background
-          const today = new Date();
-          const yyyyMmDd = today.toISOString().slice(0, 10);
-          const requestBody = {
-            name: formData.basicInfo.studentName,
-            educationGrade: formData.basicInfo.grade,
-            gender: formData.basicInfo.gender,
-            parentName: formData.basicInfo.examinerName,
-            birthDate: formData.basicInfo.birthDate,
-            checkerName: formData.basicInfo.examinerName,
-            checkupDate: yyyyMmDd,
-            schoolName: formData.basicInfo.schoolName,
-            isTalented: false,
-            talentPercent,
-            isDisabled: false,
-            disability: "",
-            disabilityPercent: 0,
-            surveyType: "Teachers",
-          };
-          (async () => {
-            try {
-              const response = await fetch("/api/survey/surveyresult/save", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(requestBody),
-              });
-              if (!response.ok) {
-                setSaveSucceeded(false);
-                return;
-              }
-              await response.json();
-              setSaveSucceeded(true);
-            } catch {
-              setSaveSucceeded(false);
-            }
-          })();
         } else {
           window.scrollTo({ top: 0, behavior: "smooth" });
           setCurrentStep("disability-select");
@@ -283,49 +248,11 @@ export default function TeacherForm() {
           ? (disabilityScore / maxDisabilityScore) * 100
           : 0;
 
-      // Use today's date as checkupDate
-      const today = new Date();
-      const yyyyMmDd = today.toISOString().slice(0, 10);
-
       // Determine isTalented based on generalScore percentage
       const talentPercent = Number(generalScore.toFixed(2));
       const isTalented = talentPercent >= 60;
 
-      // Map selectedDisability to required values
-      const disabilityMap: Record<string, string> = {
-        adhd: "ADHD",
-        "borderline-intelligence": "Borderline-Intelligence",
-        "hearing-impairment": "Hearing-Impairment",
-        "learning-difficulties": "Learning-Disabilities",
-        "visual-impairment": "Visual-Impairment-Braille",
-        "physical-disability": "Physical-Disability",
-        "multiple-disabilities": "Multiple-Disabilities",
-        "intellectual-disability": "Mild-Intellectual-Disability",
-        unified: "Unified",
-      };
-      const mappedDisability = formData.selectedDisability
-        ? disabilityMap[formData.selectedDisability] ||
-          formData.selectedDisability
-        : "";
-
-      const requestBody = {
-        name: formData.basicInfo.studentName,
-        educationGrade: formData.basicInfo.grade,
-        gender: formData.basicInfo.gender,
-        parentName: formData.basicInfo.examinerName,
-        birthDate: formData.basicInfo.birthDate,
-        checkerName: formData.basicInfo.examinerName,
-        checkupDate: yyyyMmDd,
-        schoolName: formData.basicInfo.schoolName,
-        isTalented: isTalented,
-        talentPercent: talentPercent,
-        isDisabled: true,
-        disability: mappedDisability,
-        disabilityPercent: Number(disabilityPercent.toFixed(1)),
-        surveyType: "Teachers",
-      };
-
-      // Show results immediately
+      // Show results immediately without saving to database
       setResult({
         result: totalScore,
         evaluation: isTalented
@@ -336,36 +263,137 @@ export default function TeacherForm() {
         disabilityPercent: Number(disabilityPercent.toFixed(1)),
         planFile: formData.selectedDisability,
       });
+      setShowSatisfactionForm(true);
       setSaveSucceeded(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
       setCurrentStep("results");
-
-      // Save in background
-      (async () => {
-        try {
-          const response = await fetch("/api/survey/surveyresult/save", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          });
-          if (!response.ok) {
-            setSaveSucceeded(false);
-            return;
-          }
-          await response.json();
-          setSaveSucceeded(true);
-        } catch {
-          setSaveSucceeded(false);
-        }
-      })();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleSatisfactionSubmit = async (lowTalentScore: boolean = false) => {
+    setIsSavingSatisfaction(true);
+
+    try {
+      const today = new Date();
+      const yyyyMmDd = today.toISOString().slice(0, 10);
+
+      let requestBody;
+
+      if (lowTalentScore) {
+        // For low talent score (< 60)
+        const generalScore = formData.generalAnswers.reduce((sum, answer) => {
+          if (answer === 0) return sum + 0;
+          if (answer === 1) return sum + 5;
+          if (answer === 2) return sum + 10;
+          return sum;
+        }, 0);
+        const talentPercent = Number(generalScore.toFixed(2));
+
+        requestBody = {
+          name: formData.basicInfo.studentName,
+          educationGrade: formData.basicInfo.grade,
+          gender: formData.basicInfo.gender,
+          parentName: formData.basicInfo.examinerName,
+          birthDate: formData.basicInfo.birthDate,
+          checkerName: formData.basicInfo.examinerName,
+          checkupDate: yyyyMmDd,
+          schoolName: formData.basicInfo.schoolName,
+          isTalented: false,
+          talentPercent,
+          isDisabled: false,
+          disability: "",
+          disabilityPercent: 0,
+          surveyType: "Teachers",
+          satisfactionPercent: satisfactionRating,
+        };
+      } else {
+        // For normal case with disability assessment
+        const generalScore = formData.generalAnswers.reduce((sum, answer) => {
+          if (answer === 0) return sum + 0;
+          if (answer === 1) return sum + 5;
+          if (answer === 2) return sum + 10;
+          return sum;
+        }, 0);
+        const disabilityScore = formData.disabilityAnswers.reduce(
+          (sum, answer) => {
+            if (answer === 0) return sum + 0;
+            if (answer === 1) return sum + 5;
+            if (answer === 2) return sum + 10;
+            return sum;
+          },
+          0
+        );
+
+        const maxDisabilityScore = formData.disabilityAnswers.length * 10;
+        const disabilityPercent =
+          maxDisabilityScore > 0
+            ? (disabilityScore / maxDisabilityScore) * 100
+            : 0;
+
+        const talentPercent = Number(generalScore.toFixed(2));
+        const isTalented = talentPercent >= 60;
+
+        const disabilityMap: Record<string, string> = {
+          adhd: "ADHD",
+          "borderline-intelligence": "Borderline-Intelligence",
+          "hearing-impairment": "Hearing-Impairment",
+          "learning-difficulties": "Learning-Disabilities",
+          "visual-impairment": "Visual-Impairment-Braille",
+          "physical-disability": "Physical-Disability",
+          "multiple-disabilities": "Multiple-Disabilities",
+          "intellectual-disability": "Mild-Intellectual-Disability",
+          unified: "Unified",
+        };
+        const mappedDisability = formData.selectedDisability
+          ? disabilityMap[formData.selectedDisability] ||
+            formData.selectedDisability
+          : "";
+
+        requestBody = {
+          name: formData.basicInfo.studentName,
+          educationGrade: formData.basicInfo.grade,
+          gender: formData.basicInfo.gender,
+          parentName: formData.basicInfo.examinerName,
+          birthDate: formData.basicInfo.birthDate,
+          checkerName: formData.basicInfo.examinerName,
+          checkupDate: yyyyMmDd,
+          schoolName: formData.basicInfo.schoolName,
+          isTalented: isTalented,
+          talentPercent: talentPercent,
+          isDisabled: true,
+          disability: mappedDisability,
+          disabilityPercent: Number(disabilityPercent.toFixed(1)),
+          surveyType: "Teachers",
+          satisfactionPercent: satisfactionRating,
+        };
+      }
+
+      const response = await fetch("/api/survey/surveyresult/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        setSaveSucceeded(false);
+        return;
+      }
+
+      await response.json();
+      setSaveSucceeded(true);
+      setShowSatisfactionForm(false);
+    } catch {
+      setSaveSucceeded(false);
+    } finally {
+      setIsSavingSatisfaction(false);
     }
   };
 
@@ -708,79 +736,47 @@ export default function TeacherForm() {
 
   const renderResultsStep = () => (
     <div className="text-center space-y-8">
-      {/* <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
-        <svg
-          className="w-10 h-10 text-green-600 dark:text-green-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-      </div> */}
-
-      {/* <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-        {tTeacher("results.titleSuccess")}
-      </h1> */}
-
-      {/* Save status indicator */}
-      <div className="rounded-2xl p-4 border inline-flex items-center gap-3 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
-        {saveSucceeded === true ? (
-          <svg
-            className="w-6 h-6 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        ) : saveSucceeded === false ? (
-          <svg
-            className="w-6 h-6 text-red-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        ) : (
-          <svg
-            className="w-6 h-6 text-gray-500 animate-pulse"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4l3 3"
-            />
-          </svg>
-        )}
-        <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-          {saveSucceeded === true
-            ? tParent("results.saveStatus.saved")
-            : saveSucceeded === false
-            ? tParent("results.saveStatus.notSaved")
-            : tParent("results.processing")}
-        </span>
-      </div>
+      {/* Save status indicator - Only show after satisfaction submit */}
+      {!showSatisfactionForm && (
+        <div className="rounded-2xl p-4 border inline-flex items-center gap-3 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600">
+          {saveSucceeded === true ? (
+            <svg
+              className="w-6 h-6 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ) : saveSucceeded === false ? (
+            <svg
+              className="w-6 h-6 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : null}
+          <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            {saveSucceeded === true
+              ? tParent("results.saveStatus.saved")
+              : saveSucceeded === false
+              ? tParent("results.saveStatus.notSaved")
+              : ""}
+          </span>
+        </div>
+      )}
 
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 mb-4">
         <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">
@@ -805,7 +801,7 @@ export default function TeacherForm() {
         )}
       </div>
 
-      {result?.planFile && (
+      {result?.planFile && !showSatisfactionForm && (
         <button
           onClick={() => {
             const disabilityMap: Record<string, string> = {
@@ -847,13 +843,81 @@ export default function TeacherForm() {
         </button>
       )}
 
+      {/* Satisfaction Rating Form */}
+      {showSatisfactionForm && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800 mt-6">
+          <h3 className="text-xl font-semibold text-blue-900 dark:text-blue-300 mb-4 text-center">
+            {locale === "ar" ? "مدى رضاك عن الخدمة" : "Rate Your Satisfaction"}
+          </h3>
+
+          <div className="flex justify-center gap-2 mb-6">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                onClick={() => setSatisfactionRating(star * 20)}
+                className="transition-all duration-200 transform hover:scale-110"
+                aria-label={`${star} ${locale === "ar" ? "نجوم" : "stars"}`}
+              >
+                <svg
+                  className={`w-12 h-12 ${
+                    satisfactionRating >= star * 20
+                      ? "text-yellow-400 fill-yellow-400"
+                      : "text-gray-300 dark:text-gray-600"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                  />
+                </svg>
+              </button>
+            ))}
+          </div>
+
+          {satisfactionRating > 0 && (
+            <p className="text-center text-gray-700 dark:text-gray-300 mb-4">
+              {locale === "ar"
+                ? `تقييمك: ${satisfactionRating}%`
+                : `Your rating: ${satisfactionRating}%`}
+            </p>
+          )}
+
+          <button
+            onClick={() =>
+              handleSatisfactionSubmit(
+                result?.talentPercent !== undefined && result.talentPercent < 60
+              )
+            }
+            disabled={satisfactionRating === 0 || isSavingSatisfaction}
+            className={`w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+              isSavingSatisfaction ? "animate-pulse" : ""
+            }`}
+          >
+            {isSavingSatisfaction
+              ? locale === "ar"
+                ? "جاري الحفظ..."
+                : "Saving..."
+              : locale === "ar"
+              ? "إرسال التقييم"
+              : "Submit Rating"}
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-        <Link
-          href={`/${locale}`}
-          className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors"
-        >
-          {tTeacher("buttons.backToHome")}
-        </Link>
+        {!showSatisfactionForm && (
+          <Link
+            href={`/${locale}`}
+            className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors"
+          >
+            {tTeacher("buttons.backToHome")}
+          </Link>
+        )}
       </div>
     </div>
   );
