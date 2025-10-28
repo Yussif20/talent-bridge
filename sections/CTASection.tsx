@@ -135,7 +135,7 @@ export default function CTASection() {
           </div>
 
           {/* Trust indicators */}
-          <div className="mt-16 pt-8 border-t border-white/20">
+          {/* <div className="mt-16 pt-8 border-t border-white/20">
             <p className="text-gray-200 text-sm mb-4">
               {locale === "ar" ? "موثوق من قبل" : "Trusted by"}
             </p>
@@ -155,7 +155,7 @@ export default function CTASection() {
                 3000+ {locale === "ar" ? "عائلة" : "Families"}
               </span>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

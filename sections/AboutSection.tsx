@@ -114,7 +114,7 @@ export default function AboutSection() {
               </div>
             </div>
 
-            <div className="flex justify-center lg:justify-start">
+            {/* <div className="flex justify-center lg:justify-start">
               <Link
                 href={`/${locale}/about`}
                 className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
@@ -138,7 +138,7 @@ export default function AboutSection() {
                   />
                 </svg>
               </Link>
-            </div>
+            </div> */}
           </div>
 
           {/* Visual side */}
