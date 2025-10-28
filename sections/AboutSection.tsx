@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function AboutSection() {
   const locale = useLocale();

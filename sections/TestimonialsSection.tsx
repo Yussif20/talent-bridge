@@ -1,11 +1,43 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface ApiStats {
+  general: {
+    totalParticipants: number;
+  };
+  kpis: {
+    averageSatisfactionPercent: number;
+  };
+}
 
 export default function TestimonialsSection() {
   const locale = useLocale();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [stats, setStats] = useState<ApiStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/reports/summary");
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data: ApiStats = await response.json();
+        setStats(data);
+      } catch (error) {
+        console.error("Failed to fetch statistics:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const testimonials =
     locale === "ar"
@@ -202,19 +234,14 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-          <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-2xl">
-            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-              500+
-            </div>
-            <div className="text-gray-700 dark:text-gray-300">
-              {locale === "ar" ? "معلم مستخدم" : "Teachers Using"}
-            </div>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
           <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30 rounded-2xl">
             <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-              1,200+
+              {isLoading ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                `${stats?.general.totalParticipants || 0}+`
+              )}
             </div>
             <div className="text-gray-700 dark:text-gray-300">
               {locale === "ar" ? "طالب تم تقييمه" : "Students Assessed"}
@@ -223,7 +250,11 @@ export default function TestimonialsSection() {
 
           <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/30 rounded-2xl">
             <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
-              98%
+              {isLoading ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                `${stats?.kpis.averageSatisfactionPercent.toFixed(1) || 0}%`
+              )}
             </div>
             <div className="text-gray-700 dark:text-gray-300">
               {locale === "ar" ? "معدل الرضا" : "Satisfaction Rate"}
