@@ -12,7 +12,7 @@ export default function Footer() {
     { name: footer("home"), href: `/${locale}` },
     { name: footer("teacherForm"), href: `/${locale}/teacher-form` },
     { name: footer("parentForm"), href: `/${locale}/parent-form` },
-    { name: footer("about"), href: `/${locale}/about` },
+    // { name: footer("about"), href: `/${locale}/about` },
   ];
 
   return (
