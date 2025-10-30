@@ -9,6 +9,7 @@ interface FormData {
   grade: string;
   gender: string;
   parentName: string;
+  schoolName: string;
   birthDate: string;
   disability: string;
   answers: number[];
@@ -45,6 +46,7 @@ export default function ParentForm() {
     grade: "",
     gender: "",
     parentName: "",
+    schoolName: "",
     birthDate: "",
     disability: "",
     answers: new Array(15).fill(-1),
@@ -210,7 +212,7 @@ export default function ParentForm() {
         birthDate: formData.birthDate,
         checkerName: null,
         checkupDate: yyyyMmDd,
-        schoolName: null,
+        schoolName: formData.schoolName,
         isTalented: isTwiceExceptional,
         talentPercent: Number(percentage.toFixed(2)),
         isDisabled: true,
@@ -663,19 +665,38 @@ export default function ParentForm() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {t("form.birthDate")} *
-              </label>
-              <input
-                type="date"
-                value={formData.birthDate}
-                onChange={(e) => handleInputChange("birthDate", e.target.value)}
-                min={minBirthDate}
-                max={maxBirthDate}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t("form.schoolName")} *
+                </label>
+                <input
+                  type="text"
+                  value={formData.schoolName}
+                  onChange={(e) =>
+                    handleInputChange("schoolName", e.target.value)
+                  }
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t("form.birthDate")} *
+                </label>
+                <input
+                  type="date"
+                  value={formData.birthDate}
+                  onChange={(e) =>
+                    handleInputChange("birthDate", e.target.value)
+                  }
+                  min={minBirthDate}
+                  max={maxBirthDate}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
+                  required
+                />
+              </div>
             </div>
           </div>
 

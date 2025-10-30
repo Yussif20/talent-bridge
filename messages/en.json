@@ -71,6 +71,7 @@
         "female": "Female"
       },
       "parentName": "Parent Name",
+      "schoolName": "School Name",
       "birthDate": "Birth Date",
       "questions": {
         "title": "Behavioral Characteristics",
