@@ -224,13 +224,16 @@ export default function ParentForm() {
 
       console.log("Submitting to API:", requestBody);
 
-      const response = await fetch("/api/survey/surveyresult/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
+      const response = await fetch(
+        "https://virilan362-001-site1.rtempurl.com/api/SurveyResult/Save",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
 
       console.log("API Response status:", response.status);
 
