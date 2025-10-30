@@ -801,7 +801,7 @@ export default function TeacherForm() {
         )}
       </div>
 
-      {result?.planFile && !showSatisfactionForm && (
+      {result?.planFile && (
         <button
           onClick={() => {
             const disabilityMap: Record<string, string> = {
@@ -849,6 +849,15 @@ export default function TeacherForm() {
           <h3 className="text-xl font-semibold text-blue-900 dark:text-blue-300 mb-4 text-center">
             {locale === "ar" ? "مدى رضاك عن الخدمة" : "Rate Your Satisfaction"}
           </h3>
+
+          {/* Instructions */}
+          <div className="mb-6 p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-blue-200 dark:border-blue-700">
+            <p className="text-sm text-gray-700 dark:text-gray-300 text-center leading-relaxed">
+              {locale === "ar"
+                ? "نحتاج إلى تقييمك الصادق لحفظ استجابتك ومساعدتنا في تحسين خدماتنا. تقييمك يساهم في تطوير تجربة أفضل للجميع 🌟"
+                : "We need your honest rating to save your response and help us improve our services. Your feedback contributes to creating a better experience for everyone 🌟"}
+            </p>
+          </div>
 
           <div className="flex justify-center gap-2 mb-6">
             {[1, 2, 3, 4, 5].map((star) => (

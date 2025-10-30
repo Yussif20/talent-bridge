@@ -364,34 +364,32 @@ export default function ParentForm() {
                     <p className="text-green-800 dark:text-green-200 mb-4">
                       {t("results.twiceExceptionalMessage")}
                     </p>
-                    {!showSatisfactionForm && (
-                      <button
-                        onClick={() => {
-                          const fileName = formData.disability;
-                          if (!fileName) return;
-                          const link = document.createElement("a");
-                          link.href = `/${locale}/${fileName}.pdf`;
-                          link.download = fileName;
-                          link.click();
-                        }}
-                        className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors inline-flex items-center gap-2"
+                    <button
+                      onClick={() => {
+                        const fileName = formData.disability;
+                        if (!fileName) return;
+                        const link = document.createElement("a");
+                        link.href = `/${locale}/${fileName}.pdf`;
+                        link.download = fileName;
+                        link.click();
+                      }}
+                      className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors inline-flex items-center gap-2"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                        {t("results.downloadGuide")}
-                      </button>
-                    )}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      {t("results.downloadGuide")}
+                    </button>
                   </div>
                 </>
               ) : (
@@ -413,6 +411,15 @@ export default function ParentForm() {
                       ? "مدى رضاك عن الخدمة"
                       : "Rate Your Satisfaction"}
                   </h3>
+
+                  {/* Instructions */}
+                  <div className="mb-6 p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-blue-200 dark:border-blue-700">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center leading-relaxed">
+                      {locale === "ar"
+                        ? "نحتاج إلى تقييمك الصادق لحفظ استجابتك ومساعدتنا في تحسين خدماتنا. تقييمك يساهم في تطوير تجربة أفضل للجميع 🌟"
+                        : "We need your honest rating to save your response and help us improve our services. Your feedback contributes to creating a better experience for everyone 🌟"}
+                    </p>
+                  </div>
 
                   <div className="flex justify-center gap-2 mb-6">
                     {[1, 2, 3, 4, 5].map((star) => (

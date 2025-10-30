@@ -1,6 +1,5 @@
 "use client";
 import { useTranslations, useLocale } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Footer() {
@@ -31,19 +30,6 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 text-center md:text-start">
           {/* Company Info */}
           <div className="flex flex-col items-center md:items-start">
-            <div className="mb-6 transform hover:scale-105 transition-transform duration-300">
-              <Image
-                src="/logo-dark.png"
-                alt="TalentBridge Logo"
-                width={180}
-                height={90}
-                style={{ width: "auto", height: "auto" }}
-                className="select-none filter brightness-110"
-                priority
-                suppressHydrationWarning
-                draggable={false}
-              />
-            </div>
             <p className="text-gray-200 text-base leading-relaxed max-w-md mb-6">
               {footer("companyDescription")}
             </p>

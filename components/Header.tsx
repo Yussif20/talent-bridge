@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useLocale } from "next-intl";
-import Logo from "./Logo";
 import Navigation from "./Navigation";
 
 import MobileNavigation from "./MobileNavigation";
@@ -40,13 +38,6 @@ export default function Header() {
       <header className="fixed top-0 left-0 w-full z-50 border-b border-gray-200/20 dark:border-gray-700/30 bg-white/80 backdrop-blur-xl text-gray-900 dark:bg-gray-900/80 dark:text-white shadow-lg shadow-gray-200/20 dark:shadow-gray-900/20">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20 py-4">
-            {/* Logo */}
-            <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
-              <Link href={`/${locale}`}>
-                <Logo className="h-16 w-auto" />
-              </Link>
-            </div>
-
             {/* Desktop Navigation */}
             <div className="flex-1 flex justify-center items-center">
               <Navigation />
