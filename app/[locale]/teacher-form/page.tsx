@@ -862,42 +862,74 @@ export default function TeacherForm() {
             </p>
           </div>
 
-          <div className="flex justify-center gap-2 mb-6">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => setSatisfactionRating(star * 20)}
-                className="transition-all duration-200 transform hover:scale-110"
-                aria-label={`${star} ${locale === "ar" ? "نجوم" : "stars"}`}
+          {/* Satisfaction Options */}
+          <div className="space-y-3 mb-6">
+            {[
+              {
+                label: locale === "ar" ? "راضٍ جداً" : "Very Satisfied",
+                value: 100,
+                color: "green",
+              },
+              {
+                label: locale === "ar" ? "راضٍ" : "Satisfied",
+                value: 75,
+                color: "blue",
+              },
+              {
+                label:
+                  locale === "ar" ? "راضٍ إلى حد ما" : "Somewhat Satisfied",
+                value: 50,
+                color: "yellow",
+              },
+              {
+                label: locale === "ar" ? "غير راضٍ" : "Dissatisfied",
+                value: 25,
+                color: "red",
+              },
+            ].map((option) => (
+              <label
+                key={option.value}
+                className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                  satisfactionRating === option.value
+                    ? `border-${option.color}-500 bg-${option.color}-50 dark:bg-${option.color}-900/20`
+                    : "border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600 bg-white dark:bg-gray-800"
+                }`}
               >
-                <svg
-                  className={`w-12 h-12 ${
-                    satisfactionRating >= star * 20
-                      ? "text-yellow-400 fill-yellow-400"
-                      : "text-gray-300 dark:text-gray-600"
+                <input
+                  type="radio"
+                  name="satisfaction"
+                  value={option.value}
+                  checked={satisfactionRating === option.value}
+                  onChange={(e) =>
+                    setSatisfactionRating(Number(e.target.value))
+                  }
+                  className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                />
+                <span
+                  className={`ml-3 text-base font-medium ${
+                    satisfactionRating === option.value
+                      ? `text-${option.color}-700 dark:text-${option.color}-300`
+                      : "text-gray-700 dark:text-gray-300"
                   }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                  />
-                </svg>
-              </button>
+                  {option.label}
+                </span>
+                {satisfactionRating === option.value && (
+                  <svg
+                    className={`ml-auto w-6 h-6 text-${option.color}-600`}
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </label>
             ))}
           </div>
-
-          {satisfactionRating > 0 && (
-            <p className="text-center text-gray-700 dark:text-gray-300 mb-4">
-              {locale === "ar"
-                ? `تقييمك: ${satisfactionRating}%`
-                : `Your rating: ${satisfactionRating}%`}
-            </p>
-          )}
 
           <button
             onClick={() =>
