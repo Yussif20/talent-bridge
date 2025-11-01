@@ -23,7 +23,7 @@ TalentBridge is a Next.js 15.5.2 application for assessing twice-exceptional stu
 ### Base URL
 
 ```
-https://virilan362-001-site1.rtempurl.com/api/Reports/summary
+https://talent1234bridge-001-site1.stempurl.com/api/Reports/summary
 ```
 
 ### Method

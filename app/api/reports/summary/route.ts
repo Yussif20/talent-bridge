@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const response = await fetch(
-      "https://virilan362-001-site1.rtempurl.com/api/Reports/summary",
+      "https://talent1234bridge-001-site1.stempurl.com/api/Reports/summary",
       {
         headers: {
           "Content-Type": "application/json",

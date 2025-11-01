@@ -375,7 +375,7 @@ export default function TeacherForm() {
       }
 
       const response = await fetch(
-        "https://virilan362-001-site1.rtempurl.com/api/SurveyResult/Save",
+        "https://talent1234bridge-001-site1.stempurl.com/api/SurveyResult/Save",
         {
           method: "POST",
           headers: {
